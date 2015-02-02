@@ -3,30 +3,28 @@ package pack;
 import org.apache.tomcat.jdbc.pool.DataSource;
 import org.apache.tomcat.jdbc.pool.PoolProperties;
 import org.apache.tomcat.jdbc.pool.Validator;
-
-import javax.xml.crypto.Data;
 import java.util.Properties;
 
 public class DBConnection {
-
-	//Default values.
-	public static final Boolean DEFAULT_JMXENABLED = true,
-			DEFAULT_TESTWHILEIDLE = true,
-			DEFAULT_TESTONBORROW = true,
-			DEFAULT_TESTONRETURN = false,
-			DEFAULT_LOGABANDONED = true,
-			DEFAULT_REMOVEABANDONED = true;
-	public static final Integer DEFAULT_VALIDATIONINTERVAL = 30000,
-			DEFAULT_TIMEBETWEENEVICTIONRUNSMILLIS = 30000,
-			DEFAULT_MAXACTIVE = 100,
-			DEFAULT_INITIALSIZE = 10,
-			DEFAULT_MAXWAIT = 10000,
-			DEFAULT_REMOVEABANDONEDTIMEOUT = 60,
-			DEFAULT_MINEVICTABLEIDLETIMEMILLIS = 30000,
-			DEFAULT_MINIDLE = 10;
-	public static final String DEFAULT_VALIDATIONQUERY = "SELECT 1",
-			DEFAULT_JDBCINTERCEPTORS = "org.apache.tomcat.jdbc.pool.interceptor.ConnectionState;" +
-					"org.apache.tomcat.jdbc.pool.interceptor.StatementFinalizer";
+// todo probably will be deleted.
+//	//Default values.
+//	public static final Boolean DEFAULT_JMXENABLED = true,
+//			DEFAULT_TESTWHILEIDLE = true,
+//			DEFAULT_TESTONBORROW = true,
+//			DEFAULT_TESTONRETURN = false,
+//			DEFAULT_LOGABANDONED = true,
+//			DEFAULT_REMOVEABANDONED = true;
+//	public static final Integer DEFAULT_VALIDATIONINTERVAL = 30000,
+//			DEFAULT_TIMEBETWEENEVICTIONRUNSMILLIS = 30000,
+//			DEFAULT_MAXACTIVE = 100,
+//			DEFAULT_INITIALSIZE = 10,
+//			DEFAULT_MAXWAIT = 10000,
+//			DEFAULT_REMOVEABANDONEDTIMEOUT = 60,
+//			DEFAULT_MINEVICTABLEIDLETIMEMILLIS = 30000,
+//			DEFAULT_MINIDLE = 10;
+//	public static final String DEFAULT_VALIDATIONQUERY = "SELECT 1",
+//			DEFAULT_JDBCINTERCEPTORS = "org.apache.tomcat.jdbc.pool.interceptor.ConnectionState;" +
+//					"org.apache.tomcat.jdbc.pool.interceptor.StatementFinalizer";
 
 	//Real attributes.
 	private Boolean accessToUnderlyingConnectionAllowed,
@@ -222,7 +220,7 @@ public class DBConnection {
 	}
 
 	//probably must be synchronized
-	public synchronized DataSource getDataSource() {
+	public DataSource getDataSource() {
 		return dataSourceProvider;
 	}
 }
