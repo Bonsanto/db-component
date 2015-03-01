@@ -13,10 +13,10 @@ public class DBConnection {
 
 	public static void main(String... args) throws Exception {
 		PoolProperties p = new PoolProperties();
-		p.setUrl("jdbc:postgresql://localhost:5432/pokemon?user=postgres&password=masterkey");
+		p.setUrl("jdbc:postgresql://localhost:5432/pokemon");
 		p.setDriverClassName("org.postgresql.Driver");
-		p.setUsername("root");
-		p.setPassword("password");
+		p.setUsername("postgres");
+		p.setPassword("masterkey");
 		p.setJmxEnabled(true);
 		p.setTestWhileIdle(false);
 		p.setTestOnBorrow(true);
@@ -38,9 +38,9 @@ public class DBConnection {
 		DataSource datasource = new DataSource();
 		datasource.setPoolProperties(p);
 
-		Connection con = null;
+		Connection con = datasource.getConnection();
 		try {
-			runQuery(datasource.getConnection());
+			runQuery(con);
 		} finally {
 			if (con != null) try {
 				con.close();

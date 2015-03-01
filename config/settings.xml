@@ -1,12 +1,13 @@
 <settings>
     <db>
         <sgbd>postgresql</sgbd>
+        <url>jdbc:postgresql://localhost:5432/pokemon</url>
         <userName>postgres</userName>
         <password>masterkey</password>
         <ip>localhost</ip>
         <port>5432</port>
         <dbName>pokemon</dbName>
-        <jmxEnabled>true</jmxEnabled><!--Es un servicio, aparentemente-->
+        <jmxEnabled>true</jmxEnabled>
         <testWhileIdle>true</testWhileIdle>
         <testOnBorrow>true</testOnBorrow>
         <testOnReturn>false</testOnReturn>

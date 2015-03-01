@@ -50,75 +50,62 @@ public class SettingsReader {
 	}
 
 	private DBConnection getDBConnection(Element element) throws Exception {
-		boolean jmxEnabled = getBooleanValue(element, "jmxEnabled") != null ?
-				getBooleanValue(element, "jmxEnabled") :
-				DBConnection.DEFAULT_JMXENABLED,
-				testWhileIdle = getBooleanValue(element, "testWhileIdle") != null ?
-						getBooleanValue(element, "testWhileIdle") :
-						DBConnection.DEFAULT_TESTWHILEIDLE,
-				testOnBorrow = getBooleanValue(element, "testOnBorrow") != null ?
-						getBooleanValue(element, "testOnBorrow") :
-						DBConnection.DEFAULT_TESTONBORROW,
-				testOnReturn = getBooleanValue(element, "testOnReturn") != null ?
-						getBooleanValue(element, "testOnReturn") :
-						DBConnection.DEFAULT_TESTONRETURN,
-				logAbandoned = getBooleanValue(element, "logAbandoned") != null ?
-						getBooleanValue(element, "logAbandoned") :
-						DBConnection.DEFAULT_LOGABANDONED,
-				removeAbandoned = getBooleanValue(element, "removeAbandoned") != null ?
-						getBooleanValue(element, "removeAbandoned") :
-						DBConnection.DEFAULT_REMOVEABANDONED;
-		int validationInterval = getIntValue(element, "validationInterval") != null ?
-				getIntValue(element, "validationInterval") :
-				DBConnection.DEFAULT_VALIDATIONINTERVAL,
-				timeBetweenEvictionsRunMillis = getIntValue(element, "timeBetweenEvictionsRunMillis") != null ?
-						getIntValue(element, "timeBetweenEvictionsRunMillis") :
-						DBConnection.DEFAULT_TIMEBETWEENEVICTIONRUNSMILLIS,
-				maxActive = getIntValue(element, "maxActive") != null ?
-						getIntValue(element, "maxActive") :
-						DBConnection.DEFAULT_MAXACTIVE,
-				initialSize = getIntValue(element, "initialSize") != null ?
-						getIntValue(element, "initialSize") :
-						DBConnection.DEFAULT_INITIALSIZE,
-				maxWait = getIntValue(element, "maxWait") != null ?
-						getIntValue(element, "maxWait") :
-						DBConnection.DEFAULT_MAXWAIT,
-				removeAbandonedTimeout = getIntValue(element, "removeAbandonedTimeout") != null ?
-						getIntValue(element, "removeAbandonedTimeout") :
-						DBConnection.DEFAULT_REMOVEABANDONEDTIMEOUT,
-				minEvictableIdleTimeMillis = getIntValue(element, "minEvictableIdleTimeMillis") != null ?
-						getIntValue(element, "minEvictableIdleTimeMillis") :
-						DBConnection.DEFAULT_MINEVICTABLEIDLETIMEMILLIS,
-				minIdle = getIntValue(element, "minIdle") != null ?
-						getIntValue(element, "minIdle") :
-						DBConnection.DEFAULT_MINIDLE;
-		String validationQuery = getTextValue(element, "validationQuery") != null ?
-				getTextValue(element, "validationQuery") :
-				DBConnection.DEFAULT_VALIDATIONQUERY,
-				jdbcInterceptors = getTextValue(element, "jdbcInterceptors") != null ?
-						getTextValue(element, "jdbcInterceptors") :
-						DBConnection.DEFAULT_JDBCINTERCEPTORS,
-				sgbdDriver = getTextValue(element, "sgbd"),
-				userName = getTextValue(element, "userName"),
-				password = getTextValue(element, "password"),
-				port = getTextValue(element, "port"),
-				ip = getTextValue(element, "ip"),
-				sgbd = getTextValue(element, "sgbd"),
-				dbName = getTextValue(element, "dbName"),
-				url;
 
-		if (sgbdDriver.equals("postgresql")) sgbdDriver = "org.postgresql.Driver";
-		else if (sgbdDriver.equals("mysql")) sgbdDriver = "com.mysql.jdbc.Driver";
-		else if (sgbdDriver.equals("SQL Server")) sgbdDriver = "com.microsoft.sqlserver.jdbc.SQLServerDriver";
-		else throw new Exception("Data Base not supported or defined");
+
+		Boolean accessToUnderlyingConnectionAllowed = getBooleanValue(element, "accessToUnderlyingConnectionAllowed"),
+				alternateUsernameAllowed = getBooleanValue(element, "alternateUsernameAllowed"),
+				commitOnReturn = getBooleanValue(element, "commitOnReturn"),
+				defaultAutoCommit = getBooleanValue(element, "defaultAutoCommit"),
+				defaultReadOnly = getBooleanValue(element, "defaultReadOnly"),
+				fairQueue = getBooleanValue(element, "fairQueue"),
+				ignoreExceptionOnPreLoad = getBooleanValue(element, "ignoreExceptionOnPreLoad"),
+				jmxEnabled = getBooleanValue(element, "jmxEnabled"),
+				logAbandoned = getBooleanValue(element, "logAbandoned"),
+				logValidationErrors = getBooleanValue(element, "logValidationErrors"),
+				propagateInterruptState = getBooleanValue(element, "propagateInterruptState"),
+				removeAbandoned = getBooleanValue(element, "removeAbandoned"),
+				rollbackOnReturn = getBooleanValue(element, "rollbackOnReturn"),
+				testOnBorrow = getBooleanValue(element, "testOnBorrow"),
+				testOnConnect = getBooleanValue(element, "testOnConnect"),
+				testWhileIdle = getBooleanValue(element, "testWhileIdle"),
+				testOnReturn = getBooleanValue(element, "testOnReturn"),
+				useDisposableConnectionFacade = getBooleanValue(element, "useDisposableConnectionFacade"),
+				useEquals = getBooleanValue(element, "useEquals"),
+				useLock = getBooleanValue(element, "useLock");
+
+		Integer abandonWhenPercentageFull = getIntValue(element, "abandonWhenPercentageFull"),
+				defaultTranslationIsolation = getIntValue(element, "defaultTranslationIsolation"),
+				initialSize = getIntValue(element, "initialSize"),
+				maxActive = getIntValue(element, "maxActive"),
+				maxAge = getIntValue(element, "maxAge"),
+				maxIdle = getIntValue(element, "maxIdle"),
+				maxWait = getIntValue(element, "maxWait"),
+				minEvictableIdleTimeMillis = getIntValue(element, "minEvictableIdleTimeMillis"),
+				minIdle = getIntValue(element, "minIdle"),
+				numTestsPerEvictionRun = getIntValue(element, "numTestsPerEvictionRun"),
+				removeAbandonedTimeout = getIntValue(element, "removeAbandonedTimeout"),
+				suspectTimeout = getIntValue(element, "suspectTimeout"),
+				timeBetweenEvictionsRunMillis = getIntValue(element, "timeBetweenEvictionsRunMillis"),
+				validationInterval = getIntValue(element, "validationInterval"),
+				validationQueryTimeout = getIntValue(element, "validationQueryTimeout");
+
+		String connectionProperties = getTextValue(element, "connectionProperties"),
+				dataSourceJNDI = getTextValue(element, "dataSourceJNDI"),
+				defaultCatalog = getTextValue(element, "defaultCatalog"),
+				driverClassName = getTextValue(element, "driverClassName"),
+				initSQL = getTextValue(element, "initSQL"),
+				jdbcInterceptors = getTextValue(element, "jdbcInterceptors"),
+				name = getTextValue(element, "name"),
+				password = getTextValue(element, "password"),
+				url = getTextValue(element, "url"),
+				userName = getTextValue(element, "userName"),
+				validationQuery = getTextValue(element, "validationQuery"),
+				validatorClassName = getTextValue(element, "validatorClassName");
 
 		if (userName == null) throw new Exception("User Name not defined");
 		if (password == null) throw new Exception("Password not defined");
-		if (port == null) throw new Exception("Port not defined");
-		if (ip == null) throw new Exception("IP not defined");
-		if (dbName == null) throw new Exception("DB not defined");
 
-		url = "jdbc:" + sgbd + "://" + ip + ":" + port + "/" + dbName + "?" + "user=" + userName + "&password=" + password;
+//		url = "jdbc:" + sgbd + "://" + ip + ":" + port + "/" + dbName + "?" + "user=" + userName + "&password=" + password;
 		return new DBConnection();
 //		TODO
 //		return new DBConnection(jmxEnabled, testWhileIdle, testOnBorrow, testOnReturn, logAbandoned, removeAbandoned, validationInterval, timeBetweenEvictionsRunMillis, maxActive, initialSize, maxWait, removeAbandonedTimeout, minEvictableIdleTimeMillis, minIdle, url, userName, password, validationQuery, jdbcInterceptors, "DRIVER CLASS NAME", "datasource", null);
