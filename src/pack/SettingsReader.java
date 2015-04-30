@@ -50,7 +50,7 @@ public class SettingsReader {
 	}
 
 	private DBConnection getDBConnection(Element element) throws Exception {
-
+		DBConnection connection = new DBConnection();
 
 		Boolean accessToUnderlyingConnectionAllowed = getBooleanValue(element, "accessToUnderlyingConnectionAllowed"),
 				alternateUsernameAllowed = getBooleanValue(element, "alternateUsernameAllowed"),
@@ -102,12 +102,67 @@ public class SettingsReader {
 				validationQuery = getTextValue(element, "validationQuery"),
 				validatorClassName = getTextValue(element, "validatorClassName");
 
-		if (userName == null) throw new Exception("User Name not defined");
-		if (password == null) throw new Exception("Password not defined");
+		//Set the properties using5 the XML read data.
+		//Booleans
+		connection.setAccessToUnderlyingConnectionAllowed(accessToUnderlyingConnectionAllowed);
+		connection.setAlternateUsernameAllowed(alternateUsernameAllowed);
+		connection.setCommitOnReturn(commitOnReturn);
+		connection.setDefaultAutoCommit(defaultAutoCommit);
+		connection.setDefaultReadOnly(defaultReadOnly);
+		connection.setFairQueue(fairQueue);
+		connection.setIgnoreExceptionOnPreLoad(ignoreExceptionOnPreLoad);
+		connection.setJmxEnabled(jmxEnabled);
+		connection.setLogAbandoned(logAbandoned);
+		connection.setLogValidationErrors(logValidationErrors);
+		connection.setPropagateInterruptState(propagateInterruptState);
+		connection.setRemoveAbandoned(removeAbandoned);
+		connection.setRollbackOnReturn(rollbackOnReturn);
+		connection.setTestOnBorrow(testOnBorrow);
+		connection.setTestOnConnect(testOnConnect);
+		connection.setTestWhileIdle(testWhileIdle);
+		connection.setTestOnReturn(testOnReturn);
+		connection.setUseDisposableConnectionFacade(useDisposableConnectionFacade);
+		connection.setUseEquals(useEquals);
+		connection.setUseLock(useLock);
+
+		//Integers.
+		connection.setAbandonWhenPercentageFull(abandonWhenPercentageFull);
+		connection.setDefaultTranslationIsolation(defaultTranslationIsolation);
+		connection.setInitialSize(initialSize);
+		connection.setMaxActive(maxActive);
+		connection.setMaxAge(maxAge);
+		connection.setMaxIdle(maxIdle);
+		connection.setMaxWait(maxWait);
+		connection.setMinEvictableIdleTimeMillis(minEvictableIdleTimeMillis);
+		connection.setMinIdle(minIdle);
+		connection.setNumTestsPerEvictionRun(numTestsPerEvictionRun);
+		connection.setRemoveAbandonedTimeout(removeAbandonedTimeout);
+		connection.setSuspectTimeout(suspectTimeout);
+		connection.setTimeBetweenEvictionsRunMillis(timeBetweenEvictionsRunMillis);
+		connection.setValidationInterval(validationInterval);
+		connection.setValidationQueryTimeout(validationQueryTimeout);
+
+		//Strings.
+		connection.setConnectionProperties(connectionProperties);
+		connection.setDataSourceJNDI(dataSourceJNDI);
+		connection.setDefaultCatalog(defaultCatalog);
+		connection.setDriverClassName(driverClassName);
+		connection.setInitSQL(initSQL);
+		connection.setJdbcInterceptors(jdbcInterceptors);
+		connection.setName(name);
+		connection.setPassword(password);
+		connection.setUrl(url);
+		connection.setUserName(userName);
+		connection.setValidationQuery(validationQuery);
+		connection.setValidatorClassName(validatorClassName);
+
+		//todo: commented because the validation should be done in the DBConnection class.
+//		if (userName == null) throw new Exception("User Name not defined");
+//		if (password == null) throw new Exception("Password not defined");
 
 //		url = "jdbc:" + sgbd + "://" + ip + ":" + port + "/" + dbName + "?" + "user=" + userName + "&password=" + password;
-		return new DBConnection();
-//		TODO
+		return connection;
+//		TODO probbaly is better to use setters and getters
 //		return new DBConnection(jmxEnabled, testWhileIdle, testOnBorrow, testOnReturn, logAbandoned, removeAbandoned, validationInterval, timeBetweenEvictionsRunMillis, maxActive, initialSize, maxWait, removeAbandonedTimeout, minEvictableIdleTimeMillis, minIdle, url, userName, password, validationQuery, jdbcInterceptors, "DRIVER CLASS NAME", "datasource", null);
 	}
 
