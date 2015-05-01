@@ -17,7 +17,6 @@ import java.util.ArrayList;
 public class SettingsReader {
 	private ArrayList<DBConnection> dBConnections = new ArrayList<DBConnection>();
 	private Document dom;
-	private Element doc;
 
 	public void readSettings(String path) throws ParserConfigurationException, org.xml.sax.SAXException, IOException {
 		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -26,9 +25,11 @@ public class SettingsReader {
 	}
 
 	public void parseSettings() {
+
+		//Probably this will be changed and used the log4js instead, or maybe throws an exception
 		if (dom == null) System.out.println("The document hasn't been instantiated");
 		else {
-			doc = dom.getDocumentElement();
+			Element doc = dom.getDocumentElement();
 			NodeList nl = doc.getElementsByTagName("db");
 
 			if (nl != null && nl.getLength() > 0) {
@@ -162,10 +163,11 @@ public class SettingsReader {
 
 //		url = "jdbc:" + sgbd + "://" + ip + ":" + port + "/" + dbName + "?" + "user=" + userName + "&password=" + password;
 		return connection;
-//		TODO probbaly is better to use setters and getters
+//		TODO probably is better to use setters and getters
 //		return new DBConnection(jmxEnabled, testWhileIdle, testOnBorrow, testOnReturn, logAbandoned, removeAbandoned, validationInterval, timeBetweenEvictionsRunMillis, maxActive, initialSize, maxWait, removeAbandonedTimeout, minEvictableIdleTimeMillis, minIdle, url, userName, password, validationQuery, jdbcInterceptors, "DRIVER CLASS NAME", "datasource", null);
 	}
 
+	//Provides the string value inside a tag
 	private String getTextValue(Element element, String tag) {
 		String val = null;
 		NodeList nl = element.getElementsByTagName(tag);
@@ -177,10 +179,12 @@ public class SettingsReader {
 		return val;
 	}
 
+	//Provides the Integer value of a determined tag
 	private Integer getIntValue(Element element, String tag) {
 		return getTextValue(element, tag) == null ? null : Integer.parseInt(getTextValue(element, tag));
 	}
 
+	//Provides the Boolean value of a determined tag
 	private Boolean getBooleanValue(Element element, String tag) {
 		return getTextValue(element, tag) == null ? null : Boolean.parseBoolean(getTextValue(element, tag));
 	}

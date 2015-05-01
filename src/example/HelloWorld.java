@@ -20,10 +20,11 @@ public class HelloWorld {
 		return result;
 	}
 
-	
+	//Probably the settings reader will be inside of the main.
 	public static void main(String[] argv) {
 		Object implementor = new HelloWorld();
 		String address = "http://localhost:9000/HelloWorld";
 		Endpoint.publish(address, implementor);
+		System.out.println(address);
 	}
 }
