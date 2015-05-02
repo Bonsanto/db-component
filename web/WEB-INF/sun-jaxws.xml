@@ -6,4 +6,8 @@
                 name='HelloWorld'
                 implementation='example.HelloWorld'
                 url-pattern='/services/HelloWorld'/>
+        <endpoint
+                name='Dispatcher'
+                implementation='server.Dispatcher'
+                url-pattern='/services/Dispatcher'/>
 </endpoints>

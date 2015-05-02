@@ -8,6 +8,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Element;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -21,7 +22,8 @@ public class SettingsReader {
 	public void readSettings(String path) throws ParserConfigurationException, org.xml.sax.SAXException, IOException {
 		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 		DocumentBuilder db = dbf.newDocumentBuilder();
-		dom = db.parse(path);
+		dom = db.parse(new File(path));
+		dom.getDocumentElement().normalize();
 	}
 
 	public void parseSettings() {
@@ -37,6 +39,7 @@ public class SettingsReader {
 					Element el = (Element) nl.item(i);
 					try {
 						DBConnection db = getDBConnection(el);
+						db.setAllPoolProperties();
 						dBConnections.add(db);
 					} catch (Exception e) {
 						e.printStackTrace();

@@ -3,6 +3,7 @@ package pack;
 import org.apache.tomcat.jdbc.pool.DataSource;
 import org.apache.tomcat.jdbc.pool.PoolProperties;
 import org.apache.tomcat.jdbc.pool.Validator;
+
 import java.util.Properties;
 
 public class DBConnection {
@@ -499,18 +500,18 @@ public class DBConnection {
 	}
 
 	public DBConnection(Boolean accessToUnderlyingConnectionAllowed, Boolean alternateUsernameAllowed, Boolean commitOnReturn,
-	                    Boolean defaultAutoCommit, Boolean defaultReadOnly, Boolean fairQueue, Boolean ignoreExceptionOnPreLoad,
-	                    Boolean jmxEnabled, Boolean logAbandoned, Boolean logValidationErrors, Boolean propagateInterruptState,
-	                    Boolean removeAbandoned, Boolean rollbackOnReturn, Boolean testOnBorrow, Boolean testOnConnect,
-	                    Boolean testWhileIdle, Boolean testOnReturn, Boolean useDisposableConnectionFacade, Boolean useEquals,
-	                    Boolean useLock, Integer abandonWhenPercentageFull, Integer defaultTranslationIsolation, Integer initialSize,
-	                    Integer maxActive, Integer maxAge, Integer maxIdle, Integer maxWait, Integer minEvictableIdleTimeMillis,
-	                    Integer minIdle, Integer numTestsPerEvictionRun, Integer removeAbandonedTimeout, Integer suspectTimeout,
-	                    Integer timeBetweenEvictionsRunMillis, Integer validationInterval, Integer validationQueryTimeout,
-	                    String connectionProperties, String dataSourceJNDI, String defaultCatalog, String driverClassName,
-	                    String initSQL, String jdbcInterceptors, String name, String password, String url, String userName,
-	                    String validationQuery, String validatorClassName, DataSource dataSource, PoolProperties poolProperties,
-	                    Properties dbProperties, Validator validator) {
+						Boolean defaultAutoCommit, Boolean defaultReadOnly, Boolean fairQueue, Boolean ignoreExceptionOnPreLoad,
+						Boolean jmxEnabled, Boolean logAbandoned, Boolean logValidationErrors, Boolean propagateInterruptState,
+						Boolean removeAbandoned, Boolean rollbackOnReturn, Boolean testOnBorrow, Boolean testOnConnect,
+						Boolean testWhileIdle, Boolean testOnReturn, Boolean useDisposableConnectionFacade, Boolean useEquals,
+						Boolean useLock, Integer abandonWhenPercentageFull, Integer defaultTranslationIsolation, Integer initialSize,
+						Integer maxActive, Integer maxAge, Integer maxIdle, Integer maxWait, Integer minEvictableIdleTimeMillis,
+						Integer minIdle, Integer numTestsPerEvictionRun, Integer removeAbandonedTimeout, Integer suspectTimeout,
+						Integer timeBetweenEvictionsRunMillis, Integer validationInterval, Integer validationQueryTimeout,
+						String connectionProperties, String dataSourceJNDI, String defaultCatalog, String driverClassName,
+						String initSQL, String jdbcInterceptors, String name, String password, String url, String userName,
+						String validationQuery, String validatorClassName, DataSource dataSource, PoolProperties poolProperties,
+						Properties dbProperties, Validator validator) {
 		this.accessToUnderlyingConnectionAllowed = accessToUnderlyingConnectionAllowed;
 		this.alternateUsernameAllowed = alternateUsernameAllowed;
 		this.commitOnReturn = commitOnReturn;
@@ -564,71 +565,77 @@ public class DBConnection {
 		this.validator = validator;
 	}
 
-	public void setAllPoolProperties() {
+	public void setAllPoolProperties() throws Exception {
 		poolProperties = new PoolProperties();
 
-		//Mandatory items.
-		poolProperties.setUrl(url);
-		poolProperties.setDriverClassName(driverClassName);
-		poolProperties.setUsername(userName);
-		poolProperties.setPassword(password);
+		//todo: probably more ifs to provide more information of which wasn't defined.
+		if (url == null || driverClassName == null || userName == null || password == null) {
+			throw new Exception("A mandatory item wasn't defined correctly");
+		} else {
+			//Mandatory items.
+			poolProperties.setUrl(url);
+			poolProperties.setDriverClassName(driverClassName);
+			poolProperties.setUsername(userName);
+			poolProperties.setPassword(password);
 
-		//Not Mandatory Items.
-		if (abandonWhenPercentageFull != null) poolProperties.setAbandonWhenPercentageFull(abandonWhenPercentageFull);
-		if (accessToUnderlyingConnectionAllowed != null)
-			poolProperties.setAccessToUnderlyingConnectionAllowed(accessToUnderlyingConnectionAllowed);
-		if (alternateUsernameAllowed != null) poolProperties.setAlternateUsernameAllowed(alternateUsernameAllowed);
-		if (commitOnReturn != null) poolProperties.setCommitOnReturn(commitOnReturn);
-		if (connectionProperties != null) poolProperties.setConnectionProperties(connectionProperties);
-		if (dataSource != null) poolProperties.setDataSource(dataSource); //todo: probably a problem.
-		if (dataSourceJNDI != null) poolProperties.setDataSourceJNDI(dataSourceJNDI);
-		if (dbProperties != null) poolProperties.setDbProperties(dbProperties);
-		if (defaultAutoCommit != null) poolProperties.setDefaultAutoCommit(defaultAutoCommit);
-		if (defaultCatalog != null) poolProperties.setDefaultCatalog(defaultCatalog);
-		if (defaultReadOnly != null) poolProperties.setDefaultReadOnly(defaultReadOnly);
-		if (defaultTranslationIsolation != null)
-			poolProperties.setDefaultTransactionIsolation(defaultTranslationIsolation);
-		if (fairQueue != null) poolProperties.setFairQueue(fairQueue);
-		if (ignoreExceptionOnPreLoad != null) poolProperties.setIgnoreExceptionOnPreLoad(ignoreExceptionOnPreLoad);
-		if (initialSize != null) poolProperties.setInitialSize(initialSize);
-		if (initSQL != null) poolProperties.setInitSQL(initSQL);
-		if (jdbcInterceptors != null) poolProperties.setJdbcInterceptors(jdbcInterceptors);
-		if (jmxEnabled != null) poolProperties.setJmxEnabled(jmxEnabled);
-		if (logAbandoned != null) poolProperties.setLogAbandoned(logAbandoned);
-		if (logValidationErrors != null) poolProperties.setLogValidationErrors(logValidationErrors);
-		if (maxActive != null) poolProperties.setMaxActive(maxActive);
-		if (maxAge != null) poolProperties.setMaxAge(maxAge);
-		if (maxIdle != null) poolProperties.setMaxIdle(maxIdle);
-		if (maxWait != null) poolProperties.setMaxWait(maxWait);
-		if (minEvictableIdleTimeMillis != null)
-			poolProperties.setMinEvictableIdleTimeMillis(minEvictableIdleTimeMillis);
-		if (minIdle != null) poolProperties.setMinIdle(minIdle);
-		if (name != null) poolProperties.setName(name);
-		if (numTestsPerEvictionRun != null) poolProperties.setNumTestsPerEvictionRun(numTestsPerEvictionRun);
-		if (propagateInterruptState != null) poolProperties.setPropagateInterruptState(propagateInterruptState);
-		if (removeAbandoned != null) poolProperties.setRemoveAbandoned(removeAbandoned);
-		if (removeAbandonedTimeout != null) poolProperties.setRemoveAbandonedTimeout(removeAbandonedTimeout);
-		if (rollbackOnReturn != null) poolProperties.setRollbackOnReturn(rollbackOnReturn);
-		if (suspectTimeout != null) poolProperties.setSuspectTimeout(suspectTimeout);
-		if (testOnBorrow != null) poolProperties.setTestOnBorrow(testOnBorrow);
-		if (testOnConnect != null) poolProperties.setTestOnConnect(testOnConnect);
-		if (testOnReturn != null) poolProperties.setTestOnReturn(testOnReturn);
-		if (testWhileIdle != null) poolProperties.setTestWhileIdle(testWhileIdle);
-		if (timeBetweenEvictionsRunMillis != null)
-			poolProperties.setTimeBetweenEvictionRunsMillis(timeBetweenEvictionsRunMillis);
-		if (useDisposableConnectionFacade != null)
-			poolProperties.setUseDisposableConnectionFacade(useDisposableConnectionFacade);
-		if (useEquals != null) poolProperties.setUseEquals(useEquals);
-		if (useLock != null) poolProperties.setUseLock(useLock);
-		if (validationInterval != null) poolProperties.setValidationInterval(validationInterval);
-		if (validationQuery != null) poolProperties.setValidationQuery(validationQuery);
-		if (validationQueryTimeout != null) poolProperties.setValidationQueryTimeout(validationQueryTimeout);
-		if (validator != null) poolProperties.setValidator(validator);
-		if (validatorClassName != null) poolProperties.setValidatorClassName(validatorClassName);
+			//Not Mandatory Items.
+			if (abandonWhenPercentageFull != null)
+				poolProperties.setAbandonWhenPercentageFull(abandonWhenPercentageFull);
+			if (accessToUnderlyingConnectionAllowed != null)
+				poolProperties.setAccessToUnderlyingConnectionAllowed(accessToUnderlyingConnectionAllowed);
+			if (alternateUsernameAllowed != null) poolProperties.setAlternateUsernameAllowed(alternateUsernameAllowed);
+			if (commitOnReturn != null) poolProperties.setCommitOnReturn(commitOnReturn);
+			if (connectionProperties != null) poolProperties.setConnectionProperties(connectionProperties);
+			if (dataSource != null) poolProperties.setDataSource(dataSource); //todo: probably a problem.
+			if (dataSourceJNDI != null) poolProperties.setDataSourceJNDI(dataSourceJNDI);
+			if (dbProperties != null) poolProperties.setDbProperties(dbProperties);
+			if (defaultAutoCommit != null) poolProperties.setDefaultAutoCommit(defaultAutoCommit);
+			if (defaultCatalog != null) poolProperties.setDefaultCatalog(defaultCatalog);
+			if (defaultReadOnly != null) poolProperties.setDefaultReadOnly(defaultReadOnly);
+			if (defaultTranslationIsolation != null)
+				poolProperties.setDefaultTransactionIsolation(defaultTranslationIsolation);
+			if (fairQueue != null) poolProperties.setFairQueue(fairQueue);
+			if (ignoreExceptionOnPreLoad != null) poolProperties.setIgnoreExceptionOnPreLoad(ignoreExceptionOnPreLoad);
+			if (initialSize != null) poolProperties.setInitialSize(initialSize);
+			if (initSQL != null) poolProperties.setInitSQL(initSQL);
+			if (jdbcInterceptors != null) poolProperties.setJdbcInterceptors(jdbcInterceptors);
+			if (jmxEnabled != null) poolProperties.setJmxEnabled(jmxEnabled);
+			if (logAbandoned != null) poolProperties.setLogAbandoned(logAbandoned);
+			if (logValidationErrors != null) poolProperties.setLogValidationErrors(logValidationErrors);
+			if (maxActive != null) poolProperties.setMaxActive(maxActive);
+			if (maxAge != null) poolProperties.setMaxAge(maxAge);
+			if (maxIdle != null) poolProperties.setMaxIdle(maxIdle);
+			if (maxWait != null) poolProperties.setMaxWait(maxWait);
+			if (minEvictableIdleTimeMillis != null)
+				poolProperties.setMinEvictableIdleTimeMillis(minEvictableIdleTimeMillis);
+			if (minIdle != null) poolProperties.setMinIdle(minIdle);
+			if (name != null) poolProperties.setName(name);
+			if (numTestsPerEvictionRun != null) poolProperties.setNumTestsPerEvictionRun(numTestsPerEvictionRun);
+			if (propagateInterruptState != null) poolProperties.setPropagateInterruptState(propagateInterruptState);
+			if (removeAbandoned != null) poolProperties.setRemoveAbandoned(removeAbandoned);
+			if (removeAbandonedTimeout != null) poolProperties.setRemoveAbandonedTimeout(removeAbandonedTimeout);
+			if (rollbackOnReturn != null) poolProperties.setRollbackOnReturn(rollbackOnReturn);
+			if (suspectTimeout != null) poolProperties.setSuspectTimeout(suspectTimeout);
+			if (testOnBorrow != null) poolProperties.setTestOnBorrow(testOnBorrow);
+			if (testOnConnect != null) poolProperties.setTestOnConnect(testOnConnect);
+			if (testOnReturn != null) poolProperties.setTestOnReturn(testOnReturn);
+			if (testWhileIdle != null) poolProperties.setTestWhileIdle(testWhileIdle);
+			if (timeBetweenEvictionsRunMillis != null)
+				poolProperties.setTimeBetweenEvictionRunsMillis(timeBetweenEvictionsRunMillis);
+			if (useDisposableConnectionFacade != null)
+				poolProperties.setUseDisposableConnectionFacade(useDisposableConnectionFacade);
+			if (useEquals != null) poolProperties.setUseEquals(useEquals);
+			if (useLock != null) poolProperties.setUseLock(useLock);
+			if (validationInterval != null) poolProperties.setValidationInterval(validationInterval);
+			if (validationQuery != null) poolProperties.setValidationQuery(validationQuery);
+			if (validationQueryTimeout != null) poolProperties.setValidationQueryTimeout(validationQueryTimeout);
+			if (validator != null) poolProperties.setValidator(validator);
+			if (validatorClassName != null) poolProperties.setValidatorClassName(validatorClassName);
 
-		//Set the DataSource Provider's Properties.
-		dataSourceProvider = new DataSource();
-		dataSourceProvider.setPoolProperties(poolProperties);
+			//Set the DataSource Provider's Properties.
+			dataSourceProvider = new DataSource();
+			dataSourceProvider.setPoolProperties(poolProperties);
+		}
 	}
 
 	//probably must be synchronized
