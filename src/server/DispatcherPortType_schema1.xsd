@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<xs:schema version="1.0" targetNamespace="http://server/" xmlns:tns="http://server/" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <xs:element name="queryJSON" type="tns:queryJSON"/>
+
+  <xs:element name="queryJSONResponse" type="tns:queryJSONResponse"/>
+
+  <xs:element name="sayHelloWorldFrom" type="tns:sayHelloWorldFrom"/>
+
+  <xs:element name="sayHelloWorldFromResponse" type="tns:sayHelloWorldFromResponse"/>
+
+  <xs:complexType name="sayHelloWorldFrom">
+    <xs:sequence>
+      <xs:element name="arg0" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="sayHelloWorldFromResponse">
+    <xs:sequence>
+      <xs:element name="return" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="queryJSON">
+    <xs:sequence>
+      <xs:element name="arg0" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="queryJSONResponse">
+    <xs:sequence>
+      <xs:element name="return" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>
+

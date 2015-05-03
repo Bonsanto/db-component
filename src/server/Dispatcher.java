@@ -1,5 +1,6 @@
 package server;
 
+import dependencies.JSONBuilder;
 import org.xml.sax.SAXException;
 import pack.DBConnection;
 import pack.SettingsReader;
@@ -37,6 +38,30 @@ public class Dispatcher {
 		return result;
 	}
 
+	@WebMethod
+	public String queryJSON(String parameters) {
+		JSONBuilder jsonBuilder = new JSONBuilder();
+
+		try {
+			Connection connection = dBConnections.get(0).getDataSourceProvider().getConnection();
+			Statement st = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+			ResultSet rs = st.executeQuery("SELECT * FROM pokemon ORDER BY id_pokemon ASC ");
+
+			if (rs.next())
+				jsonBuilder.addProperty(rs, "response");
+			else
+				jsonBuilder.addProperty("message", "Not Found");
+
+			rs.close();
+			st.close();
+			connection.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+			jsonBuilder.addProperty("message", e.getErrorCode());
+		}
+		jsonBuilder.build();
+		return jsonBuilder.JSON();
+	}
 
 	public static void main(String[] argv) {
 		try {
@@ -62,6 +87,7 @@ public class Dispatcher {
 			}
 			rs.close();
 			st.close();
+			connection.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

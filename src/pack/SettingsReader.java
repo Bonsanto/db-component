@@ -15,6 +15,30 @@ import java.util.ArrayList;
 /**
  * Created by Bonsanto on 1/19/2015.
  */
+
+/**
+ *
+ * LINK --- http://alvinalexander.com/java/jdbc-connection-string-mysql-postgresql-sqlserver
+ * JDBC connection string examples
+ * Here’s a table showing the syntax for JDBC URLs and drivers that I've used on recent projects.
+ * (If you'd like to see more detailed JDBC URL and Driver examples for each database, see the sections below.)
+ * Database 	URL (JDBC Connection String)
+ * JDBC Driver
+ * MySQL 	jdbc:mysql://HOST/DATABASE
+ * com.mysql.jdbc.Driver
+ *
+ * Postgresql 	jdbc:postgresql://HOST/DATABASE
+ * org.postgresql.Driver
+ *
+ * SQL Server
+ * jdbc:microsoft:sqlserver://HOST:1433;DatabaseName=DATABASE
+ * com.microsoft.jdbc.sqlserver.SQLServerDriver
+ * (see the Comments section below for more information and changes)
+ *
+ *  DB2 	jdbc:as400://HOST/DATABASE;
+ *  com.ibm.as400.access.AS400JDBCDriver
+ */
+
 public class SettingsReader {
 	private ArrayList<DBConnection> dBConnections = new ArrayList<DBConnection>();
 	private Document dom;
@@ -101,6 +125,7 @@ public class SettingsReader {
 				jdbcInterceptors = getTextValue(element, "jdbcInterceptors"),
 				name = getTextValue(element, "name"),
 				password = getTextValue(element, "password"),
+				//TODO: URL shouldn't be provided?
 				url = getTextValue(element, "url"),
 				userName = getTextValue(element, "userName"),
 				validationQuery = getTextValue(element, "validationQuery"),
