@@ -1,14 +1,10 @@
 <settings>
-	<db>
+	<db id="0">
 		<sgbd>postgresql</sgbd>
-		<!--todo: URL should be composed by the program and not be given by the user -->
 		<url>jdbc:postgresql://localhost:5432/pokemon</url>
 		<driverClassName>org.postgresql.Driver</driverClassName>
 		<userName>postgres</userName>
 		<password>masterkey</password>
-		<ip>localhost</ip>
-		<port>5432</port>
-		<dbName>pokemon</dbName>
 		<jmxEnabled>true</jmxEnabled>
 		<testWhileIdle>true</testWhileIdle>
 		<testOnBorrow>true</testOnBorrow>
@@ -29,10 +25,4 @@
 			org.apache.tomcat.jdbc.pool.interceptor.StatementFinalizer
 		</jdbcInterceptors>
 	</db>
-	<!--<db>-->
-	<!--<sgbd>postgresql</sgbd>-->
-	<!--<user>postgres</user>-->
-	<!--<password>masterkey</password>-->
-	<!--<port>5432</port>-->
-	<!--</db>-->
 </settings>
