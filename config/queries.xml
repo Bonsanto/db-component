@@ -1,14 +1,18 @@
 <!--todo //agregar ids para base de datos y a los queries-->
+<!--todo correct the query's bodies -->
 <queries>
 	<db id="0">
+		<query id="1">SELECT field1, field2 FROM tableName WHERE field3 = '$value$' AND field2 = '$value$' AND field3 =
+			$value$
+		</query>
 		<query id="0">SELECT * FROM tableName</query>
-		<query id="1">SELECT field1, field2 FROM tableName WHERE field3 = '$value$'</query>
-		<query id="2">DELETE $table$ FROM $table$ WHERE $field$=$value$</query>
+		<query id="2">DELETE tableName FROM tableName WHERE field1=$value$</query>
 	</db>
 	<db id="1">
+		<query id="1">SELECT field1, field2 FROM tableName WHERE field3 = '$value$' AND field2 = '$value$' AND field3 =
+			$value$
+		</query>
 		<query id="0">SELECT * FROM tableName</query>
-		<query id="1">SELECT field1, field2 FROM tableName WHERE field3 = '$value$'</query>
-		<query id="2">DELETE $table$ FROM $table$ WHERE $field$=$value$</query>
-		<query id="3">DELETE $table$ FROM $table$ WHERE $field$=$value$</query>
+		<query id="2">DELETE tableName FROM tableName WHERE field1=$value$</query>
 	</db>
 </queries>
