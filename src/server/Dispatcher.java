@@ -57,9 +57,8 @@ public class Dispatcher {
 	public static void main(String[] argv) {
 		try {
 			SettingsReader reader = new SettingsReader();
-			dBConnections = reader.readSettings("E:\\Documents\\GitHub\\db-component\\config\\settings.xml");
-
 			QueriesReader queriesReader = new QueriesReader();
+			dBConnections = reader.readSettings("E:\\Documents\\GitHub\\db-component\\config\\settings.xml");
 			dBConnections = queriesReader.readQueries("E:\\Documents\\GitHub\\db-component\\config\\queries.xml", dBConnections);
 
 			Connection connection = dBConnections.get("0").getDataSourceProvider().getConnection();
