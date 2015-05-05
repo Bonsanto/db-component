@@ -18,21 +18,21 @@ import java.util.Objects;
 public class QueriesReader {
 	private ArrayList<Query> queries = new ArrayList<>();
 
-	public void readQueries(String path) throws ParserConfigurationException, org.xml.sax.SAXException, IOException {
+	public void readQueries(String path) throws Exception {
 		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 		DocumentBuilder db = dbf.newDocumentBuilder();
 		Document doc = db.parse(new File(path));
 		doc.getDocumentElement().normalize();
 
 		//todo: probably a log here..
-		if (Objects.equals(path, "")) System.out.println("The file's path wasn't provided");
+		if (Objects.equals(path, "")) throw new Exception("The file's path wasn't provided");
 
 		else {
 			NodeList queries = doc.getElementsByTagName("query");
 
-			for (int j = 0; j < queries.getLength(); j++) {
+			for (int i = 0; i < queries.getLength(); i++) {
 				try {
-					this.queries.add(readQuery((Element) queries.item(j)));
+					this.queries.add(readQuery((Element) queries.item(i)));
 				} catch (Exception e) {
 					e.printStackTrace();
 				}

@@ -2,22 +2,20 @@ package pack;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.ParserConfigurationException;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Element;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Objects;
 
 /**
  * Created by Bonsanto on 1/19/2015.
  */
 
 /**
- *
  * LINK --- http://alvinalexander.com/java/jdbc-connection-string-mysql-postgresql-sqlserver
  * JDBC connection string examples
  * Here’s a table showing the syntax for JDBC URLs and drivers that I've used on recent projects.
@@ -26,58 +24,45 @@ import java.util.ArrayList;
  * JDBC Driver
  * MySQL 	jdbc:mysql://HOST/DATABASE
  * com.mysql.jdbc.Driver
- *
+ * <p/>
  * Postgresql 	jdbc:postgresql://HOST/DATABASE
  * org.postgresql.Driver
- *
+ * <p/>
  * SQL Server
  * jdbc:microsoft:sqlserver://HOST:1433;DatabaseName=DATABASE
  * com.microsoft.jdbc.sqlserver.SQLServerDriver
  * (see the Comments section below for more information and changes)
- *
- *  DB2 	jdbc:as400://HOST/DATABASE;
- *  com.ibm.as400.access.AS400JDBCDriver
+ * <p/>
+ * DB2 	jdbc:as400://HOST/DATABASE;
+ * com.ibm.as400.access.AS400JDBCDriver
  */
 
 public class SettingsReader {
-	private ArrayList<DBConnection> dBConnections = new ArrayList<DBConnection>();
-	private Document dom;
+	private ArrayList<DBConnection> dBConnections = new ArrayList<>();
 
-	public void readSettings(String path) throws ParserConfigurationException, org.xml.sax.SAXException, IOException {
+	public void readSettings(String path) throws Exception {
 		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 		DocumentBuilder db = dbf.newDocumentBuilder();
-		dom = db.parse(new File(path));
-		dom.getDocumentElement().normalize();
-	}
+		Document doc = db.parse(new File(path));
+		doc.getDocumentElement().normalize();
 
-	public void parseSettings() {
+		// todo: another log here?
+		if (Objects.equals(path, "")) throw new Exception("The file's path wasn't provided");
 
-		//Probably this will be changed and used the log4js instead, or maybe throws an exception
-		if (dom == null) System.out.println("The document hasn't been instantiated");
 		else {
-			Element doc = dom.getDocumentElement();
 			NodeList nl = doc.getElementsByTagName("db");
 
-			if (nl != null && nl.getLength() > 0) {
-				for (int i = 0; i < nl.getLength(); i++) {
-					Element el = (Element) nl.item(i);
-					try {
-						DBConnection db = getDBConnection(el);
-						db.setAllPoolProperties();
-						dBConnections.add(db);
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
+			for (int i = 0; i < nl.getLength(); i++) {
+				try {
+					dBConnections.add(readDataBase((Element) nl.item(i)));
+				} catch (Exception ex) {
+					ex.printStackTrace();
 				}
 			}
 		}
 	}
 
-	public ArrayList<DBConnection> getDBConnections() {
-		return dBConnections;
-	}
-
-	private DBConnection getDBConnection(Element element) throws Exception {
+	private DBConnection readDataBase(Element element) throws Exception {
 		DBConnection connection = new DBConnection();
 
 		Boolean accessToUnderlyingConnectionAllowed = getBooleanValue(element, "accessToUnderlyingConnectionAllowed"),
@@ -125,7 +110,6 @@ public class SettingsReader {
 				jdbcInterceptors = getTextValue(element, "jdbcInterceptors"),
 				name = getTextValue(element, "name"),
 				password = getTextValue(element, "password"),
-				//TODO: URL shouldn't be provided?
 				url = getTextValue(element, "url"),
 				userName = getTextValue(element, "userName"),
 				validationQuery = getTextValue(element, "validationQuery"),
@@ -190,9 +174,14 @@ public class SettingsReader {
 //		if (password == null) throw new Exception("Password not defined");
 
 //		url = "jdbc:" + sgbd + "://" + ip + ":" + port + "/" + dbName + "?" + "user=" + userName + "&password=" + password;
+		connection.setAllPoolProperties();
 		return connection;
 //		TODO probably is better to use setters and getters
 //		return new DBConnection(jmxEnabled, testWhileIdle, testOnBorrow, testOnReturn, logAbandoned, removeAbandoned, validationInterval, timeBetweenEvictionsRunMillis, maxActive, initialSize, maxWait, removeAbandonedTimeout, minEvictableIdleTimeMillis, minIdle, url, userName, password, validationQuery, jdbcInterceptors, "DRIVER CLASS NAME", "datasource", null);
+	}
+
+	public ArrayList<DBConnection> getDBConnections() {
+		return dBConnections;
 	}
 
 	//Provides the string value inside a tag

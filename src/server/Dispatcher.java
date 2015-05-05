@@ -3,6 +3,8 @@ package server;
 import dependencies.JSONBuilder;
 import org.xml.sax.SAXException;
 import pack.DBConnection;
+import pack.QueriesReader;
+import pack.Query;
 import pack.SettingsReader;
 
 import javax.jws.WebMethod;
@@ -45,7 +47,7 @@ public class Dispatcher {
 		try {
 			Connection connection = dBConnections.get(0).getDataSourceProvider().getConnection();
 			Statement st = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-			ResultSet rs = st.executeQuery("SELECT * FROM pokemon ORDER BY id_pokemon ASC ");
+			ResultSet rs = st.executeQuery("SELECT * FROM pokemon ORDER BY id_pokemon ASC");
 
 			if (rs.next())
 				jsonBuilder.addProperty(rs, "response");
@@ -67,18 +69,16 @@ public class Dispatcher {
 		try {
 			reader = new SettingsReader();
 			reader.readSettings("E:\\Documents\\GitHub\\db-component\\config\\settings.xml");
-			reader.parseSettings();
 			dBConnections = reader.getDBConnections();
-		} catch (ParserConfigurationException e) {
-			e.printStackTrace();
-		} catch (SAXException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
+
+			QueriesReader queriesReader = new QueriesReader();
+			queriesReader.readQueries("E:\\Documents\\GitHub\\db-component\\config\\queries.xml");
+			ArrayList<Query> queries = queriesReader.getQueries();
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		System.out.println(dBConnections.size());
-		try {
 
+		try {
 			Connection connection = dBConnections.get(0).getDataSourceProvider().getConnection();
 			Statement st = connection.createStatement();
 			ResultSet rs = st.executeQuery("SELECT * FROM pokemon ORDER BY id_pokemon ASC ");
