@@ -2,11 +2,9 @@ package pack;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.DocumentBuilder;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Element;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Objects;
@@ -18,7 +16,7 @@ import java.util.Objects;
 /**
  * LINK --- http://alvinalexander.com/java/jdbc-connection-string-mysql-postgresql-sqlserver
  * JDBC connection string examples
- * Here’s a table showing the syntax for JDBC URLs and drivers that I've used on recent projects.
+ * Hereï¿½s a table showing the syntax for JDBC URLs and drivers that I've used on recent projects.
  * (If you'd like to see more detailed JDBC URL and Driver examples for each database, see the sections below.)
  * Database 	URL (JDBC Connection String)
  * JDBC Driver
@@ -168,23 +166,16 @@ public class SettingsReader {
 		connection.setUserName(userName);
 		connection.setValidationQuery(validationQuery);
 		connection.setValidatorClassName(validatorClassName);
-
-		//todo: commented because the validation should be done in the DBConnection class.
-//		if (userName == null) throw new Exception("User Name not defined");
-//		if (password == null) throw new Exception("Password not defined");
-
-//		url = "jdbc:" + sgbd + "://" + ip + ":" + port + "/" + dbName + "?" + "user=" + userName + "&password=" + password;
 		connection.setAllPoolProperties();
+
 		return connection;
-//		TODO probably is better to use setters and getters
-//		return new DBConnection(jmxEnabled, testWhileIdle, testOnBorrow, testOnReturn, logAbandoned, removeAbandoned, validationInterval, timeBetweenEvictionsRunMillis, maxActive, initialSize, maxWait, removeAbandonedTimeout, minEvictableIdleTimeMillis, minIdle, url, userName, password, validationQuery, jdbcInterceptors, "DRIVER CLASS NAME", "datasource", null);
 	}
 
 	public ArrayList<DBConnection> getDBConnections() {
 		return dBConnections;
 	}
 
-	//Provides the string value inside a tag
+	//Provides the string value inside a tag.
 	private String getTextValue(Element element, String tag) {
 		String val = null;
 		NodeList nl = element.getElementsByTagName(tag);
@@ -196,12 +187,12 @@ public class SettingsReader {
 		return val;
 	}
 
-	//Provides the Integer value of a determined tag
+	//Provides the Integer value of a determined tag.
 	private Integer getIntValue(Element element, String tag) {
 		return getTextValue(element, tag) == null ? null : Integer.parseInt(getTextValue(element, tag));
 	}
 
-	//Provides the Boolean value of a determined tag
+	//Provides the Boolean value of a determined tag.
 	private Boolean getBooleanValue(Element element, String tag) {
 		return getTextValue(element, tag) == null ? null : Boolean.parseBoolean(getTextValue(element, tag));
 	}
