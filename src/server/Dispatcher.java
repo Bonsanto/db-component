@@ -17,37 +17,25 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Created by Bonsanto on 4/30/2015.
  */
 @WebService()
 public class Dispatcher {
-	private static SettingsReader reader;
-	private static ArrayList<DBConnection> dBConnections;
-//  @WebMethod
-//  public String sayHelloWorldFrom(String from) {
-//    String result = "Hello, world, from " + from;
-//    System.out.println(result);
-//    return result;
-//  }
-
+	private static HashMap<String, DBConnection> dBConnections;
 
 	@WebMethod
-	public String sayHelloWorldFrom(String from) {
-		String result = "Hello, world, from " + from;
-		System.out.println(result);
-		return result;
-	}
-
-	@WebMethod
-	public String queryJSON(String parameters) {
+	public String queryJSON(String idDB, String idQuery, String... parameters) {
 		JSONBuilder jsonBuilder = new JSONBuilder();
 
 		try {
-			Connection connection = dBConnections.get(0).getDataSourceProvider().getConnection();
+			DBConnection dbConnection = dBConnections.get(idDB);
+			Connection connection = dbConnection.getDataSourceProvider().getConnection();
 			Statement st = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-			ResultSet rs = st.executeQuery("SELECT * FROM pokemon ORDER BY id_pokemon ASC");
+			String query = dbConnection.queries.get(idQuery).getQuery(parameters);
+			ResultSet rs = st.executeQuery(query);
 
 			if (rs.next())
 				jsonBuilder.addProperty(rs, "response");
@@ -57,9 +45,10 @@ public class Dispatcher {
 			rs.close();
 			st.close();
 			connection.close();
-		} catch (SQLException e) {
+		//todo: probably add a log here.
+		} catch (Exception e) {
 			e.printStackTrace();
-			jsonBuilder.addProperty("message", e.getErrorCode());
+			jsonBuilder.addProperty("message", e.getMessage());
 		}
 		jsonBuilder.build();
 		return jsonBuilder.JSON();
@@ -67,28 +56,23 @@ public class Dispatcher {
 
 	public static void main(String[] argv) {
 		try {
-			reader = new SettingsReader();
-			reader.readSettings("E:\\Documents\\GitHub\\db-component\\config\\settings.xml");
-			dBConnections = reader.getDBConnections();
+			SettingsReader reader = new SettingsReader();
+			dBConnections = reader.readSettings("E:\\Documents\\GitHub\\db-component\\config\\settings.xml");
 
 			QueriesReader queriesReader = new QueriesReader();
-			queriesReader.readQueries("E:\\Documents\\GitHub\\db-component\\config\\queries.xml");
-			ArrayList<Query> queries = queriesReader.getQueries();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+			dBConnections = queriesReader.readQueries("E:\\Documents\\GitHub\\db-component\\config\\queries.xml", dBConnections);
 
-		try {
-			Connection connection = dBConnections.get(0).getDataSourceProvider().getConnection();
+			Connection connection = dBConnections.get("0").getDataSourceProvider().getConnection();
 			Statement st = connection.createStatement();
-			ResultSet rs = st.executeQuery("SELECT * FROM pokemon ORDER BY id_pokemon ASC ");
+			ResultSet rs = st.executeQuery("SELECT * FROM pokemon ORDER BY id_pokemon ASC");
+
 			while (rs.next()) {
 				System.out.println("id_pokemon = " + rs.getInt("id_pokemon") + ", na_pokemon = " + rs.getString("na_pokemon"));
 			}
 			rs.close();
 			st.close();
 			connection.close();
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 

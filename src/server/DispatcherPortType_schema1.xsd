@@ -5,25 +5,11 @@
 
   <xs:element name="queryJSONResponse" type="tns:queryJSONResponse"/>
 
-  <xs:element name="sayHelloWorldFrom" type="tns:sayHelloWorldFrom"/>
-
-  <xs:element name="sayHelloWorldFromResponse" type="tns:sayHelloWorldFromResponse"/>
-
-  <xs:complexType name="sayHelloWorldFrom">
-    <xs:sequence>
-      <xs:element name="arg0" type="xs:string" minOccurs="0"/>
-    </xs:sequence>
-  </xs:complexType>
-
-  <xs:complexType name="sayHelloWorldFromResponse">
-    <xs:sequence>
-      <xs:element name="return" type="xs:string" minOccurs="0"/>
-    </xs:sequence>
-  </xs:complexType>
-
   <xs:complexType name="queryJSON">
     <xs:sequence>
       <xs:element name="arg0" type="xs:string" minOccurs="0"/>
+      <xs:element name="arg1" type="xs:string" minOccurs="0"/>
+      <xs:element name="arg2" type="xs:string" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
     </xs:sequence>
   </xs:complexType>
 

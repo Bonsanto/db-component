@@ -2,11 +2,13 @@ package pack;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.DocumentBuilder;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Element;
+
 import java.io.File;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Objects;
 
 /**
@@ -36,9 +38,9 @@ import java.util.Objects;
  */
 
 public class SettingsReader {
-	private ArrayList<DBConnection> dBConnections = new ArrayList<>();
+	private HashMap<String, DBConnection> dBConnections = new HashMap<>();
 
-	public void readSettings(String path) throws Exception {
+	public HashMap<String, DBConnection> readSettings(String path) throws Exception {
 		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 		DocumentBuilder db = dbf.newDocumentBuilder();
 		Document doc = db.parse(new File(path));
@@ -52,15 +54,16 @@ public class SettingsReader {
 
 			for (int i = 0; i < nl.getLength(); i++) {
 				try {
-					dBConnections.add(readDataBase((Element) nl.item(i)));
+					readDataBase((Element) nl.item(i));
 				} catch (Exception ex) {
 					ex.printStackTrace();
 				}
 			}
 		}
+		return dBConnections;
 	}
 
-	private DBConnection readDataBase(Element element) throws Exception {
+	private void readDataBase(Element element) throws Exception {
 		DBConnection connection = new DBConnection();
 
 		Boolean accessToUnderlyingConnectionAllowed = getBooleanValue(element, "accessToUnderlyingConnectionAllowed"),
@@ -111,7 +114,8 @@ public class SettingsReader {
 				url = getTextValue(element, "url"),
 				userName = getTextValue(element, "userName"),
 				validationQuery = getTextValue(element, "validationQuery"),
-				validatorClassName = getTextValue(element, "validatorClassName");
+				validatorClassName = getTextValue(element, "validatorClassName"),
+				id = getAttribute(element, "id");
 
 		//Set the properties using5 the XML read data.
 		//Booleans
@@ -168,11 +172,8 @@ public class SettingsReader {
 		connection.setValidatorClassName(validatorClassName);
 		connection.setAllPoolProperties();
 
-		return connection;
-	}
-
-	public ArrayList<DBConnection> getDBConnections() {
-		return dBConnections;
+		//Adds the new connection to the dbConnection hashmap.
+		this.dBConnections.put(id, connection);
 	}
 
 	//Provides the string value inside a tag.
@@ -195,5 +196,10 @@ public class SettingsReader {
 	//Provides the Boolean value of a determined tag.
 	private Boolean getBooleanValue(Element element, String tag) {
 		return getTextValue(element, tag) == null ? null : Boolean.parseBoolean(getTextValue(element, tag));
+	}
+
+	//Provides the String attribute of the Connection.
+	private String getAttribute(Element element, String attribute) {
+		return element.getAttribute(attribute);
 	}
 }

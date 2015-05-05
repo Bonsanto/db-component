@@ -4,9 +4,12 @@ import org.apache.tomcat.jdbc.pool.DataSource;
 import org.apache.tomcat.jdbc.pool.PoolProperties;
 import org.apache.tomcat.jdbc.pool.Validator;
 
+import java.util.HashMap;
 import java.util.Properties;
 
 public class DBConnection {
+	//Attribute that holds all the queries for this DB
+	public HashMap<String, Query> queries = new HashMap<>();
 
 	//Real attributes.
 	private Boolean accessToUnderlyingConnectionAllowed,

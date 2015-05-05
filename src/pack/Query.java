@@ -1,35 +1,12 @@
 package pack;
 
-
-import com.sun.deploy.util.ArrayUtil;
-
-import java.lang.reflect.Array;
 import java.util.Objects;
-import java.util.StringJoiner;
 
 /**
  * Created by Bonsanto on 5/4/2015.
  */
 public class Query {
-	private String db,
-			id,
-			sentence;
-
-	public String getDB() {
-		return db;
-	}
-
-	public void setDB(String db) {
-		this.db = db;
-	}
-
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
-	}
+	private String sentence;
 
 	public String getSentence() {
 		return sentence;
@@ -80,5 +57,12 @@ public class Query {
 
 		//Tidy up the string and returns it.
 		return completeWord.replaceAll("\t+", " ").replaceAll("\n+", " ").replaceAll(" +", " ");
+	}
+
+	public Query(String sentence) {
+		this.sentence = sentence;
+	}
+
+	public Query() {
 	}
 }

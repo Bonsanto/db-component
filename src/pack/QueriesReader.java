@@ -4,19 +4,21 @@ package pack;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Element;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Objects;
 
 /**
  * Created by Bonsanto on 5/4/2015.
  */
 public class QueriesReader {
-	private ArrayList<Query> queries = new ArrayList<>();
+	private HashMap<String, DBConnection> connections = new HashMap<>();
 
-	public void readQueries(String path) throws Exception {
+	public HashMap<String, DBConnection> readQueries(String path, HashMap<String, DBConnection> connections) throws Exception {
 		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 		DocumentBuilder db = dbf.newDocumentBuilder();
 		Document doc = db.parse(new File(path));
@@ -25,35 +27,33 @@ public class QueriesReader {
 		//todo: probably a log here..
 		if (Objects.equals(path, "")) throw new Exception("The file's path wasn't provided");
 
-		else {
-			NodeList queries = doc.getElementsByTagName("query");
+		//todo: probably a log here
+		if (connections.size() == 0) throw new Exception("There aren't DBs available, verify the settings.xml");
 
-			for (int i = 0; i < queries.getLength(); i++) {
-				try {
-					this.queries.add(readQuery((Element) queries.item(i)));
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
+		this.connections = connections;
+		NodeList queries = doc.getElementsByTagName("query");
+
+		for (int i = 0; i < queries.getLength(); i++) {
+			try {
+				readQuery((Element) queries.item(i));
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 		}
+		return this.connections;
 	}
 
-	public Query readQuery(Element element) throws Exception {
-		Query query = new Query();
-
-		//Used to get the id "id" attribute of the parentNode of the tag, in this case to know for what DB it will be used.
-		query.setDB(element.getParentNode().getAttributes().getNamedItem("id").getNodeValue());
-
+	private void readQuery(Element element) throws Exception {
 		//Used to get the id of the query.
-		query.setId(element.getAttribute("id"));
+		String id = element.getAttribute("id");
+
+		//Used to get the id of the db for those queries.
+		String db = element.getParentNode().getAttributes().getNamedItem("id").getNodeValue();
 
 		//Used to get the content of the query.
-		query.setSentence(element.getTextContent());
+		String sentence = element.getTextContent();
 
-		return query;
-	}
-
-	public ArrayList<Query> getQueries() {
-		return queries;
+		//Add the query to the Database.
+		this.connections.get(db).queries.put(id, new Query(sentence));
 	}
 }

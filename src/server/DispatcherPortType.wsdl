@@ -12,20 +12,10 @@
   <message name="queryJSONResponse">
     <part name="parameters" element="tns:queryJSONResponse"/>
   </message>
-  <message name="sayHelloWorldFrom">
-    <part name="parameters" element="tns:sayHelloWorldFrom"/>
-  </message>
-  <message name="sayHelloWorldFromResponse">
-    <part name="parameters" element="tns:sayHelloWorldFromResponse"/>
-  </message>
   <portType name="Dispatcher">
     <operation name="queryJSON">
       <input ns1:Action="http://server/Dispatcher/queryJSONRequest" message="tns:queryJSON" xmlns:ns1="http://www.w3.org/2007/05/addressing/metadata"/>
       <output ns2:Action="http://server/Dispatcher/queryJSONResponse" message="tns:queryJSONResponse" xmlns:ns2="http://www.w3.org/2007/05/addressing/metadata"/>
-    </operation>
-    <operation name="sayHelloWorldFrom">
-      <input ns3:Action="http://server/Dispatcher/sayHelloWorldFromRequest" message="tns:sayHelloWorldFrom" xmlns:ns3="http://www.w3.org/2007/05/addressing/metadata"/>
-      <output ns4:Action="http://server/Dispatcher/sayHelloWorldFromResponse" message="tns:sayHelloWorldFromResponse" xmlns:ns4="http://www.w3.org/2007/05/addressing/metadata"/>
     </operation>
   </portType>
 </definitions>

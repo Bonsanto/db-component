@@ -1,11 +1,10 @@
 <!--todo //agregar ids para base de datos y a los queries-->
 <!--todo correct the query's bodies -->
+<!--todo correct the query's bodies -->
 <queries>
 	<db id="0">
-		<query id="1">SELECT field1, field2 FROM tableName WHERE field3 = '$value$' AND field2 = '$value$' AND field3 =
-			$value$
-		</query>
-		<query id="0">SELECT * FROM tableName</query>
+		<query id="1">SELECT id_pokemon, na_pokemon FROM pokemon WHERE id_pokemon = $value$</query>
+		<query id="0">SELECT * FROM pokemon</query>
 		<query id="2">DELETE tableName FROM tableName WHERE field1=$value$</query>
 	</db>
 	<db id="1">
