@@ -1,22 +1,16 @@
 package server;
 
 import dependencies.JSONBuilder;
-import org.xml.sax.SAXException;
 import pack.DBConnection;
 import pack.QueriesReader;
-import pack.Query;
 import pack.SettingsReader;
-
 import javax.jws.WebMethod;
 import javax.jws.WebService;
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.ws.Endpoint;
-import java.io.IOException;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -27,25 +21,30 @@ public class Dispatcher {
 	private static HashMap<String, DBConnection> dBConnections;
 
 	@WebMethod
-	public String queryJSON(String idDB, String idQuery, String... parameters) {
+	public String queryJSON(String idDB, String idQuery, Object... parameters) {
 		JSONBuilder jsonBuilder = new JSONBuilder();
 
 		try {
 			DBConnection dbConnection = dBConnections.get(idDB);
 			Connection connection = dbConnection.getDataSourceProvider().getConnection();
-			Statement st = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-			String query = dbConnection.queries.get(idQuery).getQuery(parameters);
-			ResultSet rs = st.executeQuery(query);
+			String query = dbConnection.queries.get(idQuery).getSentence();
+			PreparedStatement pst = connection.prepareStatement(query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+
+			for (int i = 0; i < parameters.length; i++)
+				pst.setObject(i + 1, parameters[i]);
+
+			ResultSet rs = pst.executeQuery();
 
 			if (rs.next())
 				jsonBuilder.addProperty(rs, "response");
 			else
 				jsonBuilder.addProperty("message", "Not Found");
 
+			//Close everything
 			rs.close();
-			st.close();
+			pst.close();
 			connection.close();
-		//todo: probably add a log here.
+			//todo: probably add a log here.
 		} catch (Exception e) {
 			e.printStackTrace();
 			jsonBuilder.addProperty("message", e.getMessage());

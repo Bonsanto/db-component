@@ -44,6 +44,6 @@ public interface Dispatcher {
         @WebParam(name = "arg1", targetNamespace = "")
         String arg1,
         @WebParam(name = "arg2", targetNamespace = "")
-        List<String> arg2);
+        List<Object> arg2);
 
 }

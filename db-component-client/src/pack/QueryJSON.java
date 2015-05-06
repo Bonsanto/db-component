@@ -21,7 +21,7 @@ import javax.xml.bind.annotation.XmlType;
  *       &lt;sequence>
  *         &lt;element name="arg0" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="arg1" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="arg2" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="arg2" type="{http://www.w3.org/2001/XMLSchema}anyType" maxOccurs="unbounded" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -41,7 +41,7 @@ public class QueryJSON {
     protected String arg0;
     protected String arg1;
     @XmlElement(nillable = true)
-    protected List<String> arg2;
+    protected List<Object> arg2;
 
     /**
      * Gets the value of the arg0 property.
@@ -109,13 +109,13 @@ public class QueryJSON {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link String }
+     * {@link Object }
      * 
      * 
      */
-    public List<String> getArg2() {
+    public List<Object> getArg2() {
         if (arg2 == null) {
-            arg2 = new ArrayList<String>();
+            arg2 = new ArrayList<Object>();
         }
         return this.arg2;
     }
