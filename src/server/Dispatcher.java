@@ -1,9 +1,10 @@
 package server;
 
-import dependencies.JSONBuilder;
+import dependencies.JSON;
 import pack.DBConnection;
 import pack.QueriesReader;
 import pack.SettingsReader;
+
 import javax.jws.WebMethod;
 import javax.jws.WebService;
 import javax.xml.ws.Endpoint;
@@ -22,7 +23,7 @@ public class Dispatcher {
 
 	@WebMethod
 	public String queryJSON(String idDB, String idQuery, Object... parameters) {
-		JSONBuilder jsonBuilder = new JSONBuilder();
+		JSON jsonBuilder = new JSON();
 
 		try {
 			DBConnection dbConnection = dBConnections.get(idDB);
@@ -36,9 +37,9 @@ public class Dispatcher {
 			ResultSet rs = pst.executeQuery();
 
 			if (rs.next())
-				jsonBuilder.addProperty(rs, "response");
+				jsonBuilder.addAttribute("response", rs);
 			else
-				jsonBuilder.addProperty("message", "Not Found");
+				jsonBuilder.addAttribute("message", "Not Found");
 
 			//Close everything
 			rs.close();
@@ -47,26 +48,33 @@ public class Dispatcher {
 			//todo: probably add a log here.
 		} catch (Exception e) {
 			e.printStackTrace();
-			jsonBuilder.addProperty("message", e.getMessage());
+			jsonBuilder.addAttribute("message", e.getMessage());
 		}
 		jsonBuilder.build();
-		return jsonBuilder.JSON();
+		return jsonBuilder.getJson();
 	}
 
 	public static void main(String[] argv) {
 		try {
 			SettingsReader reader = new SettingsReader();
 			QueriesReader queriesReader = new QueriesReader();
+			JSON json = new JSON();
 			dBConnections = reader.readSettings("E:\\Documents\\GitHub\\db-component\\config\\settings.xml");
 			dBConnections = queriesReader.readQueries("E:\\Documents\\GitHub\\db-component\\config\\queries.xml", dBConnections);
 
-			Connection connection = dBConnections.get("0").getDataSourceProvider().getConnection();
-			Statement st = connection.createStatement();
-			ResultSet rs = st.executeQuery("SELECT * FROM pokemon ORDER BY id_pokemon ASC");
+			Connection connection = dBConnections.get("1").getDataSourceProvider().getConnection();
+			Statement st = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+			ResultSet rs = st.executeQuery("SELECT * FROM product ORDER BY id_product ASC");
 
-			while (rs.next()) {
-				System.out.println("id_pokemon = " + rs.getInt("id_pokemon") + ", na_pokemon = " + rs.getString("na_pokemon"));
-			}
+			//todo: Create a console module to request the string of the locaiton of the files, or maybe It will load the files that are in it self folder.s
+
+			if (rs.next())
+				json.addAttribute("response", rs);
+			else
+				json.addAttribute("message", "Not Found");
+
+			json.build();
+			System.out.println(json.getJson());
 			rs.close();
 			st.close();
 			connection.close();
