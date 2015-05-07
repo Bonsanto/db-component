@@ -6,6 +6,10 @@
 		<query id="1">SELECT id_pokemon, na_pokemon FROM pokemon WHERE id_pokemon = ?</query>
 		<query id="0">SELECT * FROM pokemon</query>
 		<query id="2">INSERT INTO pokemon VALUES(?,?)</query>
+		<transaction id="0">
+			<query id="0">INSERT INTO pokemon VALUES(?,?)</query>
+			<query id="1">UPDATE pokemon SET VALUES(?,?) WHERE id_pokemon = ? AND na_pokemon = ?</query>
+		</transaction>
 	</db>
 	<db id="1">
 		<query id="1">SELECT field1, field2 FROM tableName WHERE field3 = '$value$' AND field2 = '$value$' AND field3 =
