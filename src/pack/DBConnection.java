@@ -10,7 +10,6 @@ import java.util.Properties;
 public class DBConnection {
 	//Attribute that holds all the queries for this DB
 	public HashMap<String, Query> queries = new HashMap<>();
-	public HashMap<String, Transaction> transactions = new HashMap<>();
 
 	//Real attributes.
 	private Boolean accessToUnderlyingConnectionAllowed,

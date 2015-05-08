@@ -37,38 +37,7 @@ public class QueriesReader {
 			}
 		}
 
-		NodeList transactions = doc.getElementsByTagName("transaction");
-
-		for (int i = 0; i < transactions.getLength(); i++) {
-			Node node = transactions.item(i);
-			if (node != null) {
-				readTransactions((Element) node);
-			}
-		}
 		return this.connections;
-	}
-
-	private void readTransactions(Element element) {
-
-		//Used to get the id of the Data base Connection.
-		String idDBConnection = element.getParentNode().getAttributes().getNamedItem("id").getNodeValue();
-
-		//Used to get the id of the Transaction.
-		String idTransaction = element.getAttribute("id");
-
-		//Sentences of the queries.
-		Transaction transaction = new Transaction();
-
-		for (int i = 0; i < element.getChildNodes().getLength(); i++) {
-			Node node = element.getChildNodes().item(i);
-
-			if (node.getNodeType() == Node.ELEMENT_NODE) {
-				String idQuery = node.getAttributes().item(0).getNodeValue(),
-						sentence = node.getChildNodes().item(0).getNodeValue();
-				transaction.queries.put(idQuery, new Query(sentence));
-			}
-		}
-		this.connections.get(idDBConnection).transactions.put(idTransaction, transaction);
 	}
 
 	private void readSimpleQuery(Node node) {

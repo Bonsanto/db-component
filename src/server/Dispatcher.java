@@ -10,9 +10,6 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-/**
- * Created by Bonsanto on 4/30/2015.
- */
 @WebService()
 public class Dispatcher {
 	private static HashMap<String, DBConnection> dBConnections;
@@ -93,61 +90,6 @@ public class Dispatcher {
 			connection.commit();
 			connection.setAutoCommit(true);
 			connection.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-			jsonBuilder.addAttribute("message", e.getMessage());
-		}
-		jsonBuilder.build();
-		return jsonBuilder.getJson();
-	}
-
-	//Transaction consists in all the queries in the sequence declared in the sequence parameter.
-	@WebMethod
-	public String makeTransaction(String idDB, String idTransaction, String[] sequence, Object... parameters) {
-		JSON jsonBuilder = new JSON();
-
-		try {
-			DBConnection dbConnection = dBConnections.get(idDB);
-			Connection connection = dbConnection.getDataSourceProvider().getConnection();
-
-			//Finds the transaction that will be used.
-			Transaction transaction = dbConnection.transactions.get(idTransaction);
-
-			//ArrayList to store the queries.
-			ArrayList<Query> queries = new ArrayList<>();
-
-			for (String aSequence : sequence) {
-				queries.add(transaction.queries.get(aSequence));
-			}
-
-			// Typical Errors.
-			if (sequence.length != transaction.queries.size())
-				//todo: probably a log here.
-				throw new Exception("The number of elements in the sequence doesn't match with the number of expected queries");
-			if (countParameters(queries) != parameters.length)
-				throw new Exception("The number of parameters passed doesn't match with the number of expected number of parameters");
-
-			//To begin a transaction.
-			connection.setAutoCommit(false);
-
-			int parametersIteration = 0;
-			for (Query query : queries) {
-				PreparedStatement preparedStatement = connection.prepareStatement(query.getSentence());
-
-				// Counts the number of parameters for this specific query.
-				ArrayList<Query> myQuery = new ArrayList<>();
-				myQuery.add(query);
-				int number = countParameters(myQuery);
-
-				for (int i = 0; i < number; i++) {
-					preparedStatement.setObject(i, parameters[parametersIteration]);
-					parametersIteration++;
-				}
-				preparedStatement.executeUpdate();
-			}
-			connection.commit();
-			//todo: probably add other way as response.
-			jsonBuilder.addAttribute("message", "success");
 		} catch (Exception e) {
 			e.printStackTrace();
 			jsonBuilder.addAttribute("message", e.getMessage());
