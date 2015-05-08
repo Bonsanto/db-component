@@ -4,6 +4,12 @@
 <xsd:import namespace="http://server/" schemaLocation="http://localhost:9000/Dispatcher?xsd=1"/>
 </xsd:schema>
 </types>
+<message name="makeTransaction">
+<part name="parameters" element="tns:makeTransaction"/>
+</message>
+<message name="makeTransactionResponse">
+<part name="parameters" element="tns:makeTransactionResponse"/>
+</message>
 <message name="queryJSON">
 <part name="parameters" element="tns:queryJSON"/>
 </message>
@@ -11,6 +17,10 @@
 <part name="parameters" element="tns:queryJSONResponse"/>
 </message>
 <portType name="Dispatcher">
+<operation name="makeTransaction">
+<input wsam:Action="http://server/Dispatcher/makeTransactionRequest" message="tns:makeTransaction"/>
+<output wsam:Action="http://server/Dispatcher/makeTransactionResponse" message="tns:makeTransactionResponse"/>
+</operation>
 <operation name="queryJSON">
 <input wsam:Action="http://server/Dispatcher/queryJSONRequest" message="tns:queryJSON"/>
 <output wsam:Action="http://server/Dispatcher/queryJSONResponse" message="tns:queryJSONResponse"/>
@@ -18,6 +28,15 @@
 </portType>
 <binding name="DispatcherPortBinding" type="tns:Dispatcher">
 <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+<operation name="makeTransaction">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+</operation>
 <operation name="queryJSON">
 <soap:operation soapAction=""/>
 <input>

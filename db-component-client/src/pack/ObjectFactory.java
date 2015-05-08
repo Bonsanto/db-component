@@ -26,12 +26,30 @@ public class ObjectFactory {
 
     private final static QName _QueryJSONResponse_QNAME = new QName("http://server/", "queryJSONResponse");
     private final static QName _QueryJSON_QNAME = new QName("http://server/", "queryJSON");
+    private final static QName _MakeTransaction_QNAME = new QName("http://server/", "makeTransaction");
+    private final static QName _MakeTransactionResponse_QNAME = new QName("http://server/", "makeTransactionResponse");
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: pack
      * 
      */
     public ObjectFactory() {
+    }
+
+    /**
+     * Create an instance of {@link MakeTransaction }
+     * 
+     */
+    public MakeTransaction createMakeTransaction() {
+        return new MakeTransaction();
+    }
+
+    /**
+     * Create an instance of {@link MakeTransactionResponse }
+     * 
+     */
+    public MakeTransactionResponse createMakeTransactionResponse() {
+        return new MakeTransactionResponse();
     }
 
     /**
@@ -66,6 +84,24 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "http://server/", name = "queryJSON")
     public JAXBElement<QueryJSON> createQueryJSON(QueryJSON value) {
         return new JAXBElement<QueryJSON>(_QueryJSON_QNAME, QueryJSON.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link MakeTransaction }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://server/", name = "makeTransaction")
+    public JAXBElement<MakeTransaction> createMakeTransaction(MakeTransaction value) {
+        return new JAXBElement<MakeTransaction>(_MakeTransaction_QNAME, MakeTransaction.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link MakeTransactionResponse }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://server/", name = "makeTransactionResponse")
+    public JAXBElement<MakeTransactionResponse> createMakeTransactionResponse(MakeTransactionResponse value) {
+        return new JAXBElement<MakeTransactionResponse>(_MakeTransactionResponse_QNAME, MakeTransactionResponse.class, null, value);
     }
 
 }

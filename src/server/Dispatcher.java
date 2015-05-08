@@ -52,6 +52,7 @@ public class Dispatcher {
 		JSON jsonBuilder = new JSON();
 
 		try {
+			PreparedStatement preparedStatement;
 			DBConnection dbConnection = dBConnections.get(idDB);
 			Connection connection = dbConnection.getDataSourceProvider().getConnection();
 
@@ -70,8 +71,9 @@ public class Dispatcher {
 			connection.setAutoCommit(false);
 
 			int parametersIteration = 0;
+
 			for (Query query : queries) {
-				PreparedStatement preparedStatement = connection.prepareStatement(query.getSentence());
+				preparedStatement = connection.prepareStatement(query.getSentence());
 
 				//Count the number of parameters for this specific query.
 				ArrayList<Query> currentQuery = new ArrayList<>();
@@ -80,16 +82,16 @@ public class Dispatcher {
 				int numberOfParameters = countParameters(currentQuery);
 
 				for (int i = 0; i < numberOfParameters; i++) {
-					preparedStatement.setObject(i, parameters[parametersIteration]);
+					preparedStatement.setObject(i + 1, parameters[parametersIteration]);
 					parametersIteration++;
 				}
 				preparedStatement.executeUpdate();
-				//Probably this will be problematic.
-				preparedStatement.close();
 			}
+			jsonBuilder.addAttribute("message", "success");
 			connection.commit();
 			connection.setAutoCommit(true);
 			connection.close();
+//			preparedStatement.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 			jsonBuilder.addAttribute("message", e.getMessage());

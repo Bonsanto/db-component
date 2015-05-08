@@ -35,6 +35,27 @@ public interface Dispatcher {
      */
     @WebMethod
     @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "makeTransaction", targetNamespace = "http://server/", className = "pack.MakeTransaction")
+    @ResponseWrapper(localName = "makeTransactionResponse", targetNamespace = "http://server/", className = "pack.MakeTransactionResponse")
+    @Action(input = "http://server/Dispatcher/makeTransactionRequest", output = "http://server/Dispatcher/makeTransactionResponse")
+    public String makeTransaction(
+        @WebParam(name = "arg0", targetNamespace = "")
+        String arg0,
+        @WebParam(name = "arg1", targetNamespace = "")
+        List<String> arg1,
+        @WebParam(name = "arg2", targetNamespace = "")
+        List<Object> arg2);
+
+    /**
+     * 
+     * @param arg2
+     * @param arg1
+     * @param arg0
+     * @return
+     *     returns java.lang.String
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
     @RequestWrapper(localName = "queryJSON", targetNamespace = "http://server/", className = "pack.QueryJSON")
     @ResponseWrapper(localName = "queryJSONResponse", targetNamespace = "http://server/", className = "pack.QueryJSONResponse")
     @Action(input = "http://server/Dispatcher/queryJSONRequest", output = "http://server/Dispatcher/queryJSONResponse")
