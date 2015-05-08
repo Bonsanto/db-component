@@ -1,17 +1,13 @@
 package server;
 
 import dependencies.JSON;
-import pack.DBConnection;
-import pack.QueriesReader;
-import pack.SettingsReader;
+import pack.*;
 
 import javax.jws.WebMethod;
 import javax.jws.WebService;
 import javax.xml.ws.Endpoint;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.Statement;
+import java.sql.*;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -52,6 +48,126 @@ public class Dispatcher {
 		}
 		jsonBuilder.build();
 		return jsonBuilder.getJson();
+	}
+
+	@WebMethod
+	public String makeTransaction(String idDB, String[] idQueries, Object... parameters) {
+		JSON jsonBuilder = new JSON();
+
+		try {
+			DBConnection dbConnection = dBConnections.get(idDB);
+			Connection connection = dbConnection.getDataSourceProvider().getConnection();
+
+			//Finds the queries that will be executed for the transaction.
+			ArrayList<Query> queries = new ArrayList<>();
+
+			for (String queryID : idQueries) {
+				queries.add(dbConnection.queries.get(queryID));
+			}
+
+			//In case the number of parameters doesn't match.
+			if (countParameters(queries) != parameters.length)
+				throw new Exception("The number of parameters passed doesn't match with the number of expected number of parameters");
+
+			//Begin the transaction.
+			connection.setAutoCommit(false);
+
+			int parametersIteration = 0;
+			for (Query query : queries) {
+				PreparedStatement preparedStatement = connection.prepareStatement(query.getSentence());
+
+				//Count the number of parameters for this specific query.
+				ArrayList<Query> currentQuery = new ArrayList<>();
+				currentQuery.add(query);
+
+				int numberOfParameters = countParameters(currentQuery);
+
+				for (int i = 0; i < numberOfParameters; i++) {
+					preparedStatement.setObject(i, parameters[parametersIteration]);
+					parametersIteration++;
+				}
+				preparedStatement.executeUpdate();
+				//Probably this will be problematic.
+				preparedStatement.close();
+			}
+			connection.commit();
+			connection.setAutoCommit(true);
+			connection.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+			jsonBuilder.addAttribute("message", e.getMessage());
+		}
+		jsonBuilder.build();
+		return jsonBuilder.getJson();
+	}
+
+	//Transaction consists in all the queries in the sequence declared in the sequence parameter.
+	@WebMethod
+	public String makeTransaction(String idDB, String idTransaction, String[] sequence, Object... parameters) {
+		JSON jsonBuilder = new JSON();
+
+		try {
+			DBConnection dbConnection = dBConnections.get(idDB);
+			Connection connection = dbConnection.getDataSourceProvider().getConnection();
+
+			//Finds the transaction that will be used.
+			Transaction transaction = dbConnection.transactions.get(idTransaction);
+
+			//ArrayList to store the queries.
+			ArrayList<Query> queries = new ArrayList<>();
+
+			for (String aSequence : sequence) {
+				queries.add(transaction.queries.get(aSequence));
+			}
+
+			// Typical Errors.
+			if (sequence.length != transaction.queries.size())
+				//todo: probably a log here.
+				throw new Exception("The number of elements in the sequence doesn't match with the number of expected queries");
+			if (countParameters(queries) != parameters.length)
+				throw new Exception("The number of parameters passed doesn't match with the number of expected number of parameters");
+
+			//To begin a transaction.
+			connection.setAutoCommit(false);
+
+			int parametersIteration = 0;
+			for (Query query : queries) {
+				PreparedStatement preparedStatement = connection.prepareStatement(query.getSentence());
+
+				// Counts the number of parameters for this specific query.
+				ArrayList<Query> myQuery = new ArrayList<>();
+				myQuery.add(query);
+				int number = countParameters(myQuery);
+
+				for (int i = 0; i < number; i++) {
+					preparedStatement.setObject(i, parameters[parametersIteration]);
+					parametersIteration++;
+				}
+				preparedStatement.executeUpdate();
+			}
+			connection.commit();
+			//todo: probably add other way as response.
+			jsonBuilder.addAttribute("message", "success");
+		} catch (Exception e) {
+			e.printStackTrace();
+			jsonBuilder.addAttribute("message", e.getMessage());
+		}
+		jsonBuilder.build();
+		return jsonBuilder.getJson();
+	}
+
+	private int countParameters(ArrayList<Query> queries) {
+		int number = 0;
+
+		//Counts the number of ? symbols in all the queries of this transaction.
+		for (Query query : queries) {
+			String sentence = query.getSentence();
+			for (int i = 0; i < sentence.length(); i++) {
+				if (sentence.charAt(i) == '?')
+					number++;
+			}
+		}
+		return number;
 	}
 
 	public static void main(String[] argv) {
