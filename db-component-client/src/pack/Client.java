@@ -25,17 +25,17 @@ public class Client {
 		ArrayList<String> queries = new ArrayList<>();
 		ArrayList<Object> data = new ArrayList<>();
 		int idPokemon = 23;
-		String namePokemon = "Alberto",
-				newName = "Bonsanto";
+		String naProduct = "Papa",
+				newNaProduct = "Queso";
 
+		queries.add("1");
 		queries.add("2");
-		queries.add("3");
 
 		data.add(idPokemon);
-		data.add(namePokemon);
-		data.add(newName);
+		data.add(naProduct);
+		data.add(newNaProduct);
 		data.add(idPokemon);
 
-		System.out.println(dispatcher.makeTransaction("0", queries, data));
+		System.out.println(dispatcher.makeTransaction("2", queries, data));
 	}
 }
