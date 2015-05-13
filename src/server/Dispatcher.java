@@ -27,15 +27,28 @@ public class Dispatcher {
 			for (int i = 0; i < parameters.length; i++)
 				pst.setObject(i + 1, parameters[i]);
 
-			ResultSet rs = pst.executeQuery();
+			//In case it is a SELECT.
+			if (query.regionMatches(true, 0, "select", 0, 6)) {
+				ResultSet rs = pst.executeQuery();
 
-			if (rs.next())
-				jsonBuilder.addAttribute("response", rs);
-			else
-				jsonBuilder.addAttribute("message", "Not Found");
+				if (rs.next())
+					jsonBuilder.addAttribute("response", rs);
+				else
+					jsonBuilder.addAttribute("message", "Not Found");
+
+				rs.close();
+			}
+			//In case it is a INSERT, UPDATE, or DELETE.
+			else {
+				//In case the query was successfully executed.
+				if (pst.execute())
+					jsonBuilder.addAttribute("message", "success");
+				else
+					jsonBuilder.addAttribute("message", "query was unsuccessful");
+			}
+			//todo: add support for csv.
 
 			//Close everything
-			rs.close();
 			pst.close();
 			connection.close();
 			//todo: probably add a log here.
@@ -85,13 +98,12 @@ public class Dispatcher {
 					preparedStatement.setObject(i + 1, parameters[parametersIteration]);
 					parametersIteration++;
 				}
-				preparedStatement.executeUpdate();
+				preparedStatement.close();
 			}
 			jsonBuilder.addAttribute("message", "success");
 			connection.commit();
 			connection.setAutoCommit(true);
 			connection.close();
-//			preparedStatement.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 			jsonBuilder.addAttribute("message", e.getMessage());
