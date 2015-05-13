@@ -15,9 +15,9 @@
 		<query id="0">SELECT * FROM tableName</query>
 		<query id="2">DELETE tableName FROM tableName WHERE field1=$value$</query>
 	</db>
-	<db id="2">
-		<query id="0">SELECT * FROM producto</query>
-		<query id="1">INSERT INTO producto VALUES(?, ?)</query>
-		<query id="2">UPDATE producto SET na_producto = ? WHERE id_producto = ?</query>
-	</db>
+	<!--<db id="2">-->
+		<!--<query id="0">SELECT * FROM producto</query>-->
+		<!--<query id="1">INSERT INTO producto VALUES(?, ?)</query>-->
+		<!--<query id="2">UPDATE producto SET na_producto = ? WHERE id_producto = ?</query>-->
+	<!--</db>-->
 </queries>

@@ -14,6 +14,8 @@ import java.util.HashMap;
 public class Dispatcher {
 	private static HashMap<String, DBConnection> dBConnections;
 
+	//todo: add support for csv, WRITE IN DISK, SEND STATUS AND CONVERT BINARY TO ASCII 64.
+
 	@WebMethod
 	public String queryJSON(String idDB, String idQuery, Object... parameters) {
 		JSON jsonBuilder = new JSON();
@@ -34,7 +36,7 @@ public class Dispatcher {
 				if (rs.next())
 					jsonBuilder.addAttribute("response", rs);
 				else
-					jsonBuilder.addAttribute("message", "Not Found");
+					jsonBuilder.addAttribute("message", "not found");
 
 				rs.close();
 			}
@@ -46,7 +48,6 @@ public class Dispatcher {
 				else
 					jsonBuilder.addAttribute("message", "query was unsuccessful");
 			}
-			//todo: add support for csv.
 
 			//Close everything
 			pst.close();
@@ -138,8 +139,7 @@ public class Dispatcher {
 			Statement st = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
 			ResultSet rs = st.executeQuery("SELECT * FROM product ORDER BY id_product ASC");
 
-			//todo: Create a console module to request the string of the locaiton of the files, or maybe It will load the files that are in it self folder.s
-
+			//todo: Create a console module to request the string of the location of the files, or maybe It will load the files that are in it self folder.
 			if (rs.next())
 				json.addAttribute("response", rs);
 			else
@@ -155,7 +155,7 @@ public class Dispatcher {
 		}
 
 		Object implementor = new Dispatcher();
-		String address = "http://localhost:9000/Dispatcher";
+		String address = "http://0.0.0.0:9000/Dispatcher";
 		System.out.println(address);
 		Endpoint.publish(address, implementor);
 	}
