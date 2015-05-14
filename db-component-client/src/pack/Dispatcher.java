@@ -35,16 +35,40 @@ public interface Dispatcher {
      */
     @WebMethod
     @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "makeTransaction", targetNamespace = "http://server/", className = "pack.MakeTransaction")
-    @ResponseWrapper(localName = "makeTransactionResponse", targetNamespace = "http://server/", className = "pack.MakeTransactionResponse")
-    @Action(input = "http://server/Dispatcher/makeTransactionRequest", output = "http://server/Dispatcher/makeTransactionResponse")
-    public String makeTransaction(
+    @RequestWrapper(localName = "queryJSON", targetNamespace = "http://server/", className = "pack.QueryJSON")
+    @ResponseWrapper(localName = "queryJSONResponse", targetNamespace = "http://server/", className = "pack.QueryJSONResponse")
+    @Action(input = "http://server/Dispatcher/queryJSONRequest", output = "http://server/Dispatcher/queryJSONResponse")
+    public String queryJSON(
         @WebParam(name = "arg0", targetNamespace = "")
         String arg0,
         @WebParam(name = "arg1", targetNamespace = "")
-        List<String> arg1,
+        String arg1,
         @WebParam(name = "arg2", targetNamespace = "")
         List<Object> arg2);
+
+    /**
+     * 
+     * @param arg3
+     * @param arg2
+     * @param arg1
+     * @param arg0
+     * @return
+     *     returns java.lang.String
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "queryCSV", targetNamespace = "http://server/", className = "pack.QueryCSV")
+    @ResponseWrapper(localName = "queryCSVResponse", targetNamespace = "http://server/", className = "pack.QueryCSVResponse")
+    @Action(input = "http://server/Dispatcher/queryCSVRequest", output = "http://server/Dispatcher/queryCSVResponse")
+    public String queryCSV(
+        @WebParam(name = "arg0", targetNamespace = "")
+        String arg0,
+        @WebParam(name = "arg1", targetNamespace = "")
+        String arg1,
+        @WebParam(name = "arg2", targetNamespace = "")
+        String arg2,
+        @WebParam(name = "arg3", targetNamespace = "")
+        List<Object> arg3);
 
     /**
      * 
@@ -56,14 +80,14 @@ public interface Dispatcher {
      */
     @WebMethod
     @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "queryJSON", targetNamespace = "http://server/", className = "pack.QueryJSON")
-    @ResponseWrapper(localName = "queryJSONResponse", targetNamespace = "http://server/", className = "pack.QueryJSONResponse")
-    @Action(input = "http://server/Dispatcher/queryJSONRequest", output = "http://server/Dispatcher/queryJSONResponse")
-    public String queryJSON(
+    @RequestWrapper(localName = "makeTransaction", targetNamespace = "http://server/", className = "pack.MakeTransaction")
+    @ResponseWrapper(localName = "makeTransactionResponse", targetNamespace = "http://server/", className = "pack.MakeTransactionResponse")
+    @Action(input = "http://server/Dispatcher/makeTransactionRequest", output = "http://server/Dispatcher/makeTransactionResponse")
+    public String makeTransaction(
         @WebParam(name = "arg0", targetNamespace = "")
         String arg0,
         @WebParam(name = "arg1", targetNamespace = "")
-        String arg1,
+        List<String> arg1,
         @WebParam(name = "arg2", targetNamespace = "")
         List<Object> arg2);
 

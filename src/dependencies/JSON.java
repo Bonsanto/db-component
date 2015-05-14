@@ -95,19 +95,19 @@ public class JSON {
 		concat.append(":[");
 		json = concat.toString();
 
-		for (int i = 0; i < value.length; i++) {
-			if (value[i] instanceof JSON) {
-				concat.append(((JSON) value[i]).json);
+		for (Object aValue : value) {
+			if (aValue instanceof JSON) {
+				concat.append(((JSON) aValue).json);
 				concat.append(", ");
 				json = concat.toString();
-			} else if (value[i] instanceof String) {
+			} else if (aValue instanceof String) {
 				concat.append(quote);
-				concat.append(value[i]);
+				concat.append(aValue);
 				concat.append(quote);
 				concat.append(", ");
 				json = concat.toString();
 			} else {
-				concat.append(value[i]);
+				concat.append(aValue);
 				concat.append(", ");
 				json = concat.toString();
 			}

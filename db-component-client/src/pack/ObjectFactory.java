@@ -26,6 +26,8 @@ public class ObjectFactory {
 
     private final static QName _QueryJSONResponse_QNAME = new QName("http://server/", "queryJSONResponse");
     private final static QName _QueryJSON_QNAME = new QName("http://server/", "queryJSON");
+    private final static QName _QueryCSVResponse_QNAME = new QName("http://server/", "queryCSVResponse");
+    private final static QName _QueryCSV_QNAME = new QName("http://server/", "queryCSV");
     private final static QName _MakeTransaction_QNAME = new QName("http://server/", "makeTransaction");
     private final static QName _MakeTransactionResponse_QNAME = new QName("http://server/", "makeTransactionResponse");
 
@@ -34,6 +36,22 @@ public class ObjectFactory {
      * 
      */
     public ObjectFactory() {
+    }
+
+    /**
+     * Create an instance of {@link QueryCSVResponse }
+     * 
+     */
+    public QueryCSVResponse createQueryCSVResponse() {
+        return new QueryCSVResponse();
+    }
+
+    /**
+     * Create an instance of {@link QueryCSV }
+     * 
+     */
+    public QueryCSV createQueryCSV() {
+        return new QueryCSV();
     }
 
     /**
@@ -84,6 +102,24 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "http://server/", name = "queryJSON")
     public JAXBElement<QueryJSON> createQueryJSON(QueryJSON value) {
         return new JAXBElement<QueryJSON>(_QueryJSON_QNAME, QueryJSON.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link QueryCSVResponse }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://server/", name = "queryCSVResponse")
+    public JAXBElement<QueryCSVResponse> createQueryCSVResponse(QueryCSVResponse value) {
+        return new JAXBElement<QueryCSVResponse>(_QueryCSVResponse_QNAME, QueryCSVResponse.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link QueryCSV }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://server/", name = "queryCSV")
+    public JAXBElement<QueryCSV> createQueryCSV(QueryCSV value) {
+        return new JAXBElement<QueryCSV>(_QueryCSV_QNAME, QueryCSV.class, null, value);
     }
 
     /**

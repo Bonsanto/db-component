@@ -1,5 +1,6 @@
 package server;
 
+import dependencies.CSVWriter;
 import dependencies.JSON;
 import pack.*;
 
@@ -15,6 +16,54 @@ public class Dispatcher {
 	private static HashMap<String, DBConnection> dBConnections;
 
 	//todo: add support for csv, WRITE IN DISK, SEND STATUS AND CONVERT BINARY TO ASCII 64.
+	//todo: Add a log register for all the queries to the dispatcher, to leave a witness of all the queries.
+
+	@WebMethod
+	//The path includes the file name....todo: should it allow transactions?
+	public String queryCSV(String idDB, String idQuery, String path, Object... parameters) {
+		JSON jsonBuilder = new JSON();
+		CSVWriter csv = new CSVWriter();
+
+		try {
+			DBConnection dbConnection = dBConnections.get(idDB);
+			Connection connection = dbConnection.getDataSourceProvider().getConnection();
+			String query = dbConnection.queries.get(idQuery).getSentence();
+			PreparedStatement pst = connection.prepareStatement(query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+
+			for (int i = 0; i < parameters.length; i++)
+				pst.setObject(i + 1, parameters[i]);
+
+			//In case it is a SELECT.
+			if (query.regionMatches(true, 0, "select", 0, 6)) {
+				ResultSet rs = pst.executeQuery();
+
+				if (rs.next()) {
+					jsonBuilder.addAttribute("response", "success");
+					csv.writeSimpleCSV(path, rs);
+				} else
+					jsonBuilder.addAttribute("message", "not found");
+
+				rs.close();
+			}
+			//In case it is a INSERT, UPDATE, or DELETE.
+			else {
+				//In case the query was successfully executed.
+				if (pst.execute())
+					jsonBuilder.addAttribute("message", "success");
+				else
+					jsonBuilder.addAttribute("message", "query was unsuccessful");
+			}
+
+			//Close everything
+			pst.close();
+			connection.close();
+
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		jsonBuilder.build();
+		return jsonBuilder.getJson();
+	}
 
 	@WebMethod
 	public String queryJSON(String idDB, String idQuery, Object... parameters) {
@@ -143,7 +192,7 @@ public class Dispatcher {
 			if (rs.next())
 				json.addAttribute("response", rs);
 			else
-				json.addAttribute("message", "Not Found");
+				json.addAttribute("message", "not found");
 
 			json.build();
 			System.out.println(json.getJson());
