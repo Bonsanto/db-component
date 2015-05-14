@@ -37,10 +37,10 @@ public class CSVWriter {
 			for (int i = 1; i <= columnNumber; i++) {
 				rows[currentRow] += rs.getObject(i) + (columnNumber == i ? "" : columnsSeparator);
 			}
-			printWriter.println(rows[currentRow]);
 			currentRow++;
 			rs.next();
 		}
+		printWriter.append(String.join("\n", rows));
 		printWriter.flush();
 		printWriter.close();
 		fileWriter.close();

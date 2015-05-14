@@ -4,7 +4,7 @@
 <queries>
 	<db id="0">
 		<query id="1">SELECT id_pokemon, na_pokemon FROM pokemon WHERE id_pokemon = ?</query>
-		<query id="0">SELECT * FROM pokemon</query>
+		<query id="0">SELECT * FROM pokemon ORDER BY id_pokemon ASC</query>
 		<query id="2">INSERT INTO pokemon VALUES(?,?)</query>
 		<query id="3">UPDATE pokemon SET na_pokemon = ? WHERE id_pokemon = ?</query>
 	</db>
