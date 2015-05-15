@@ -7,6 +7,8 @@ import pack.*;
 import javax.jws.WebMethod;
 import javax.jws.WebService;
 import javax.xml.ws.Endpoint;
+import java.io.IOException;
+import java.security.InvalidParameterException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,6 +31,11 @@ public class Dispatcher {
 			Connection connection = dbConnection.getDataSourceProvider().getConnection();
 			String query = dbConnection.queries.get(idQuery).getSentence();
 			PreparedStatement pst = connection.prepareStatement(query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+			ArrayList<Query> queries = new ArrayList<>();
+			queries.add(new Query(query));
+
+			if (countParameters(queries) != parameters.length)
+				throw new InvalidParameterException("The number of parameters passed doesn't match with the number of expected number of parameters");
 
 			for (int i = 0; i < parameters.length; i++)
 				pst.setObject(i + 1, parameters[i]);
@@ -58,8 +65,12 @@ public class Dispatcher {
 			pst.close();
 			connection.close();
 
-		} catch (Exception ex) {
-			ex.printStackTrace();
+		} catch (SQLException | IOException e) {
+			e.printStackTrace();
+			jsonBuilder.addAttribute("message", e.getMessage());
+		} catch (NullPointerException e) {
+			e.printStackTrace();
+			jsonBuilder.addAttribute("message", "query not found");
 		}
 		jsonBuilder.build();
 		return jsonBuilder.getJson();
@@ -128,7 +139,7 @@ public class Dispatcher {
 
 			//In case the number of parameters doesn't match.
 			if (countParameters(queries) != parameters.length)
-				throw new Exception("The number of parameters passed doesn't match with the number of expected number of parameters");
+				throw new InvalidParameterException("The number of parameters passed doesn't match with the number of expected number of parameters");
 
 			//Begin the transaction.
 			connection.setAutoCommit(false);
@@ -154,7 +165,7 @@ public class Dispatcher {
 			connection.commit();
 			connection.setAutoCommit(true);
 			connection.close();
-		} catch (Exception e) {
+		} catch (SQLException | InvalidParameterException e) {
 			e.printStackTrace();
 			jsonBuilder.addAttribute("message", e.getMessage());
 		}
