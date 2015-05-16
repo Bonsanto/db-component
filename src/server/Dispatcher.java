@@ -21,12 +21,11 @@ public class Dispatcher {
 	//todo: Add a log register for all the queries to the dispatcher, to leave a witness of all the queries.
 
 	@WebMethod
-	//The path includes the file name....todo: should it allow transactions?
-	public String queryCSV(String idDB, String idQuery, String path, Object... parameters) {
+	public String writeSimpleCSV(String idDB, String idQuery, String path, Object... parameters) {
 		JSON jsonBuilder = new JSON();
-		CSVWriter csv = new CSVWriter();
 
 		try {
+			CSVWriter csv = new CSVWriter(path);
 			DBConnection dbConnection = dBConnections.get(idDB);
 			Connection connection = dbConnection.getDataSourceProvider().getConnection();
 			String query = dbConnection.queries.get(idQuery).getSentence();
@@ -46,7 +45,7 @@ public class Dispatcher {
 
 				if (rs.next()) {
 					jsonBuilder.addAttribute("response", "success");
-					csv.writeSimpleCSV(path, rs);
+					csv.writeCSV(rs);
 				} else
 					jsonBuilder.addAttribute("message", "not found");
 
@@ -54,17 +53,62 @@ public class Dispatcher {
 			}
 			//In case it is a INSERT, UPDATE, or DELETE.
 			else {
-				//In case the query was successfully executed.
-				if (pst.execute())
-					jsonBuilder.addAttribute("message", "success");
-				else
-					jsonBuilder.addAttribute("message", "query was unsuccessful");
+				jsonBuilder.addAttribute("message", "query wouldn't retrieve data");
 			}
 
 			//Close everything
 			pst.close();
 			connection.close();
+		} catch (SQLException | IOException e) {
+			e.printStackTrace();
+			jsonBuilder.addAttribute("message", e.getMessage());
+		} catch (NullPointerException e) {
+			e.printStackTrace();
+			jsonBuilder.addAttribute("message", "query not found");
+		}
+		jsonBuilder.build();
+		return jsonBuilder.getJson();
+	}
 
+	@WebMethod
+	public String writeEntireCSV(String idDB, String idQuery, String path, Object... parameters) {
+		JSON jsonBuilder = new JSON();
+
+		try {
+			CSVWriter csv = new CSVWriter(path);
+			DBConnection dbConnection = dBConnections.get(idDB);
+			Connection connection = dbConnection.getDataSourceProvider().getConnection();
+			String query = dbConnection.queries.get(idQuery).getSentence();
+			PreparedStatement pst = connection.prepareStatement(query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+			ArrayList<Query> queries = new ArrayList<>();
+			queries.add(new Query(query));
+
+			if (countParameters(queries) != parameters.length)
+				throw new InvalidParameterException("The number of parameters passed doesn't match with the number of expected number of parameters");
+
+			for (int i = 0; i < parameters.length; i++)
+				pst.setObject(i + 1, parameters[i]);
+
+			//In case it is a SELECT.
+			if (query.regionMatches(true, 0, "select", 0, 6)) {
+				ResultSet rs = pst.executeQuery();
+
+				if (rs.next()) {
+					jsonBuilder.addAttribute("response", "success");
+					csv.writeCompoundCSV(rs);
+				} else
+					jsonBuilder.addAttribute("message", "not found");
+
+				rs.close();
+			}
+			//In case it is a INSERT, UPDATE, or DELETE.
+			else {
+				jsonBuilder.addAttribute("message", "query wouldn't retrieve data");
+			}
+
+			//Close everything
+			pst.close();
+			connection.close();
 		} catch (SQLException | IOException e) {
 			e.printStackTrace();
 			jsonBuilder.addAttribute("message", e.getMessage());
@@ -126,9 +170,9 @@ public class Dispatcher {
 		JSON jsonBuilder = new JSON();
 
 		try {
-			PreparedStatement preparedStatement;
 			DBConnection dbConnection = dBConnections.get(idDB);
 			Connection connection = dbConnection.getDataSourceProvider().getConnection();
+			PreparedStatement preparedStatement;
 
 			//Finds the queries that will be executed for the transaction.
 			ArrayList<Query> queries = new ArrayList<>();
@@ -173,6 +217,7 @@ public class Dispatcher {
 		return jsonBuilder.getJson();
 	}
 
+	//Counts the number of parameters in the array of transactions.
 	private int countParameters(ArrayList<Query> queries) {
 		int number = 0;
 
