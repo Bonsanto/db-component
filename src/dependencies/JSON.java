@@ -21,7 +21,7 @@ public class JSON {
 	}
 
 
-	public void addAttribute(String attribute, ResultSet rs) throws SQLException {
+	public void addAttribute(String attribute, ResultSet rs) throws SQLException, ArrayIndexOutOfBoundsException {
 		ResultSetMetaData rsmd = rs.getMetaData();
 		rs.last();
 
@@ -31,22 +31,22 @@ public class JSON {
 		rs.first();
 
 		JSON[] rows = new JSON[rowsNumber];
+		String[] columnNames = new String[columsNumber];
+
+		for (int i = 1; i <= columnNames.length; i++)
+			columnNames[i - 1] = rsmd.getColumnName(i);
 
 		for (int rsRow = 1; rsRow <= rowsNumber; rsRow++) {
 			rows[currentRow] = new JSON();
 
-			for (int i = 1; i <= columsNumber; i++) {
-				String name = rsmd.getColumnName(i);
-				rows[currentRow].addAttribute(name, rs.getObject(i));
-			}
+			for (int i = 1; i <= columsNumber; i++)
+				rows[currentRow].addAttribute(columnNames[i - 1], rs.getObject(i));
+
 			rows[currentRow].build();
 			currentRow++;
 			rs.next();
 		}
-		if (rows.length > 0)
-			this.addAttribute(attribute, rows);
-		else
-			this.addAttribute(attribute, rows[0]);
+		this.addAttribute(attribute, rows.length > 0 ? rows : rows[0]);
 	}
 
 
@@ -124,10 +124,10 @@ public class JSON {
 	}
 
 	public void build() {
-		StringBuilder concat = new StringBuilder();
-		concat.append(json.substring(0, json.length() - 2));
-		concat.append("}");
-		json = concat.toString();
+		StringBuilder stb = new StringBuilder();
+		stb.append(json.substring(0, json.length() - 2));
+		stb.append("}");
+		json = stb.toString();
 	}
 
 	//To solve a obsolete, prehistoric and primitive problem.
