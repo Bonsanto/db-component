@@ -15,29 +15,29 @@ import java.util.HashMap;
 
 @WebService()
 public class Dispatcher {
-	private static HashMap<String, DBConnection> dBConnections;
+	private static HashMap<String, DBConnection> connections;
 
 	//todo: add support for csv, WRITE IN DISK, SEND STATUS AND CONVERT BINARY TO ASCII 64.
 	//todo: Add a log register for all the queries to the dispatcher, to leave a witness of all the queries.
 
 	@WebMethod
-	public String writeSimpleCSV(String idDB, String idQuery, String path, Object... parameters) {
+	public String writeSimpleCSV(String idDB, String idQuery, String path, Object... params) {
 		JSON jsonBuilder = new JSON();
 
 		try {
 			CSVWriter csv = new CSVWriter(path);
-			DBConnection dbConnection = dBConnections.get(idDB);
-			Connection connection = dbConnection.getDataSourceProvider().getConnection();
-			String query = dbConnection.queries.get(idQuery).getSentence();
-			PreparedStatement pst = connection.prepareStatement(query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+			DBConnection dbConn = connections.get(idDB);
+			Connection conn = dbConn.getDataSourceProvider().getConnection();
+			String query = dbConn.queries.get(idQuery).getSentence();
+			PreparedStatement pst = conn.prepareStatement(query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
 			ArrayList<Query> queries = new ArrayList<>();
 			queries.add(new Query(query));
 
-			if (countParameters(queries) != parameters.length)
+			if (countParameters(queries) != params.length)
 				throw new InvalidParameterException("The number of parameters passed doesn't match with the number of expected number of parameters");
 
-			for (int i = 0; i < parameters.length; i++)
-				pst.setObject(i + 1, parameters[i]);
+			for (int i = 0; i < params.length; i++)
+				pst.setObject(i + 1, params[i]);
 
 			//In case it is a SELECT.
 			if (query.regionMatches(true, 0, "select", 0, 6)) {
@@ -57,8 +57,7 @@ public class Dispatcher {
 			}
 
 			//Close everything
-			pst.close();
-			connection.close();
+			close(pst, conn);
 		} catch (SQLException | IOException e) {
 			e.printStackTrace();
 			jsonBuilder.addAttribute("message", e.getMessage());
@@ -71,23 +70,23 @@ public class Dispatcher {
 	}
 
 	@WebMethod
-	public String writeEntireCSV(String idDB, String idQuery, String path, Object... parameters) {
+	public String writeEntireCSV(String idDB, String idQuery, String path, Object... params) {
 		JSON jsonBuilder = new JSON();
 
 		try {
 			CSVWriter csv = new CSVWriter(path);
-			DBConnection dbConnection = dBConnections.get(idDB);
-			Connection connection = dbConnection.getDataSourceProvider().getConnection();
-			String query = dbConnection.queries.get(idQuery).getSentence();
-			PreparedStatement pst = connection.prepareStatement(query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+			DBConnection dbConn = connections.get(idDB);
+			Connection conn = dbConn.getDataSourceProvider().getConnection();
+			String query = dbConn.queries.get(idQuery).getSentence();
+			PreparedStatement pst = conn.prepareStatement(query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
 			ArrayList<Query> queries = new ArrayList<>();
 			queries.add(new Query(query));
 
-			if (countParameters(queries) != parameters.length)
+			if (countParameters(queries) != params.length)
 				throw new InvalidParameterException("The number of parameters passed doesn't match with the number of expected number of parameters");
 
-			for (int i = 0; i < parameters.length; i++)
-				pst.setObject(i + 1, parameters[i]);
+			for (int i = 0; i < params.length; i++)
+				pst.setObject(i + 1, params[i]);
 
 			//In case it is a SELECT.
 			if (query.regionMatches(true, 0, "select", 0, 6)) {
@@ -107,8 +106,7 @@ public class Dispatcher {
 			}
 
 			//Close everything
-			pst.close();
-			connection.close();
+			close(pst, conn);
 		} catch (SQLException | IOException e) {
 			e.printStackTrace();
 			jsonBuilder.addAttribute("message", e.getMessage());
@@ -121,17 +119,17 @@ public class Dispatcher {
 	}
 
 	@WebMethod
-	public String queryJSON(String idDB, String idQuery, Object... parameters) {
+	public String queryJSON(String idDB, String idQuery, Object... params) {
 		JSON jsonBuilder = new JSON();
 
 		try {
-			DBConnection dbConnection = dBConnections.get(idDB);
-			Connection connection = dbConnection.getDataSourceProvider().getConnection();
-			String query = dbConnection.queries.get(idQuery).getSentence();
-			PreparedStatement pst = connection.prepareStatement(query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+			DBConnection dbConn = connections.get(idDB);
+			Connection conn = dbConn.getDataSourceProvider().getConnection();
+			String query = dbConn.queries.get(idQuery).getSentence();
+			PreparedStatement pst = conn.prepareStatement(query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
 
-			for (int i = 0; i < parameters.length; i++)
-				pst.setObject(i + 1, parameters[i]);
+			for (int i = 0; i < params.length; i++)
+				pst.setObject(i + 1, params[i]);
 
 			//In case it is a SELECT.
 			if (query.regionMatches(true, 0, "select", 0, 6)) {
@@ -154,8 +152,7 @@ public class Dispatcher {
 			}
 
 			//Close everything
-			pst.close();
-			connection.close();
+			close(pst, conn);
 			//todo: probably add a log here.
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -170,15 +167,15 @@ public class Dispatcher {
 		JSON jsonBuilder = new JSON();
 
 		try {
-			DBConnection dbConnection = dBConnections.get(idDB);
-			Connection connection = dbConnection.getDataSourceProvider().getConnection();
-			PreparedStatement preparedStatement;
+			DBConnection dbConn = connections.get(idDB);
+			Connection conn = dbConn.getDataSourceProvider().getConnection();
+			PreparedStatement pst;
 
 			//Finds the queries that will be executed for the transaction.
 			ArrayList<Query> queries = new ArrayList<>();
 
-			for (String queryID : idQueries) {
-				queries.add(dbConnection.queries.get(queryID));
+			for (String idQuery : idQueries) {
+				queries.add(dbConn.queries.get(idQuery));
 			}
 
 			//In case the number of parameters doesn't match.
@@ -186,12 +183,12 @@ public class Dispatcher {
 				throw new InvalidParameterException("The number of parameters passed doesn't match with the number of expected number of parameters");
 
 			//Begin the transaction.
-			connection.setAutoCommit(false);
+			conn.setAutoCommit(false);
 
 			int parametersIteration = 0;
 
 			for (Query query : queries) {
-				preparedStatement = connection.prepareStatement(query.getSentence());
+				pst = conn.prepareStatement(query.getSentence());
 
 				//Count the number of parameters for this specific query.
 				ArrayList<Query> currentQuery = new ArrayList<>();
@@ -200,15 +197,15 @@ public class Dispatcher {
 				int numberOfParameters = countParameters(currentQuery);
 
 				for (int i = 0; i < numberOfParameters; i++) {
-					preparedStatement.setObject(i + 1, parameters[parametersIteration]);
+					pst.setObject(i + 1, parameters[parametersIteration]);
 					parametersIteration++;
 				}
-				preparedStatement.close();
+				pst.close();
 			}
 			jsonBuilder.addAttribute("message", "success");
-			connection.commit();
-			connection.setAutoCommit(true);
-			connection.close();
+			conn.commit();
+			conn.setAutoCommit(true);
+			conn.close();
 		} catch (SQLException | InvalidParameterException e) {
 			e.printStackTrace();
 			jsonBuilder.addAttribute("message", e.getMessage());
@@ -232,15 +229,21 @@ public class Dispatcher {
 		return number;
 	}
 
+	//Close prepared statement and connection
+	private void close(PreparedStatement pst, Connection con) throws SQLException {
+		pst.close();
+		con.close();
+	}
+
 	public static void main(String[] argv) {
 		try {
 			SettingsReader reader = new SettingsReader();
 			QueriesReader queriesReader = new QueriesReader();
 			JSON json = new JSON();
-			dBConnections = reader.readSettings("E:\\Documents\\GitHub\\db-component\\config\\settings.xml");
-			dBConnections = queriesReader.readQueries("E:\\Documents\\GitHub\\db-component\\config\\queries.xml", dBConnections);
+			connections = reader.readSettings("E:\\Documents\\GitHub\\db-component\\config\\settings.xml");
+			connections = queriesReader.readQueries("E:\\Documents\\GitHub\\db-component\\config\\queries.xml", connections);
 
-			Connection connection = dBConnections.get("1").getDataSourceProvider().getConnection();
+			Connection connection = connections.get("1").getDataSourceProvider().getConnection();
 			Statement st = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
 			ResultSet rs = st.executeQuery("SELECT * FROM product ORDER BY id_product ASC");
 
