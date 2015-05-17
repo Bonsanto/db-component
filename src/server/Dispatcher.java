@@ -7,6 +7,7 @@ import pack.*;
 import javax.jws.WebMethod;
 import javax.jws.WebService;
 import javax.xml.ws.Endpoint;
+import java.io.File;
 import java.io.IOException;
 import java.security.InvalidParameterException;
 import java.sql.*;
@@ -240,8 +241,10 @@ public class Dispatcher {
 			SettingsReader reader = new SettingsReader();
 			QueriesReader queriesReader = new QueriesReader();
 			JSON json = new JSON();
-			connections = reader.readSettings("E:\\Documents\\GitHub\\db-component\\config\\settings.xml");
-			connections = queriesReader.readQueries("E:\\Documents\\GitHub\\db-component\\config\\queries.xml", connections);
+			File dir = new File("");
+			System.out.println(dir.getAbsolutePath());
+			connections = reader.readSettings(dir.getAbsolutePath() + "\\config\\settings.xml");
+			connections = queriesReader.readQueries(dir.getAbsolutePath() + "\\config\\queries.xml", connections);
 
 			Connection connection = connections.get("1").getDataSourceProvider().getConnection();
 			Statement st = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
@@ -258,13 +261,13 @@ public class Dispatcher {
 			rs.close();
 			st.close();
 			connection.close();
+			Dispatcher implementor = new Dispatcher();
+			String address = "http://0.0.0.0:9000/Dispatcher";
+			System.out.println(address);
+			Endpoint.publish(address, implementor);
+		//todo: add log
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
-		Object implementor = new Dispatcher();
-		String address = "http://0.0.0.0:9000/Dispatcher";
-		System.out.println(address);
-		Endpoint.publish(address, implementor);
 	}
 }
