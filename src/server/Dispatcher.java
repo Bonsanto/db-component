@@ -236,30 +236,13 @@ public class Dispatcher {
 
 	public static void main(String[] argv) {
 		try {
-			String separator = File.separator;
 			SettingsReader reader = new SettingsReader();
 			QueriesReader queriesReader = new QueriesReader();
-			JSON json = new JSON();
-			File dir = new File("");
-			System.out.println(dir.getAbsolutePath());
-			connections = reader.readSettings(dir.getAbsolutePath() + (Objects.equals(separator, "\\") ? "\\config\\settings.xml" : "/config/settings.xml"));
-			connections = queriesReader.readQueries(dir.getAbsolutePath() + (Objects.equals(separator, "\\") ? "\\config\\queries.xml" : "/config/queries.xml"), connections);
+			connections = reader.readSettings(new File("").getAbsolutePath() +
+					File.separator + "config" + File.separator + "settings.xml");
+			connections = queriesReader.readQueries(new File("").getAbsolutePath() +
+					File.separator + "config" + File.separator + "queries.xml", connections);
 
-			//todo: remove this piece
-//			Connection connection = connections.get("1").getDataSourceProvider().getConnection();
-//			Statement st = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-//			ResultSet rs = st.executeQuery("SELECT * FROM product ORDER BY id_product ASC");
-
-			//todo: Create a console module to request the string of the location of the files, or maybe It will load the files that are in it self folder.
-//			if (rs.next())
-//				json.addAttribute("response", rs);
-//			else
-//				json.addAttribute("message", "not found");
-//
-//			rs.close();
-//			st.close();
-//			connection.close();
-//			System.out.println(json.getJson());
 			Dispatcher implementor = new Dispatcher();
 			String address = "http://0.0.0.0:9000/Dispatcher";
 			System.out.println(address);
