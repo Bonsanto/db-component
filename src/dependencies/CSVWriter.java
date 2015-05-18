@@ -82,8 +82,6 @@ public class CSVWriter {
 		this.printWriter = new PrintWriter(this.fileWriter);
 		this.columnsSeparator = columnsSeparator;
 		this.rowsSeparator = rowsSeparator;
-
-
 	}
 
 	//Constructor in case de separators are not defined.

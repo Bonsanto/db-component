@@ -8,6 +8,7 @@ import java.sql.SQLException;
 public class JSON {
 	private final String quote = "\"";
 	private String json = "{";
+	private boolean built = false;
 
 	public JSON(JSON json) {
 		this.json = json.json;
@@ -17,6 +18,7 @@ public class JSON {
 	}
 
 	public String getJson() {
+		if (!built) this.build();
 		return json;
 	}
 
@@ -123,11 +125,12 @@ public class JSON {
 
 	}
 
-	public void build() {
+	private void build() {
 		StringBuilder stb = new StringBuilder();
 		stb.append(json.substring(0, json.length() - 2));
 		stb.append("}");
 		json = stb.toString();
+		built = true;
 	}
 
 	//To solve a obsolete, prehistoric and primitive problem.
