@@ -9,17 +9,8 @@
 		<query id="3">UPDATE pokemon SET na_pokemon = ? WHERE id_pokemon = ?</query>
 	</db>
 	<db id="1">
-		<query id="1">SELECT field1, field2 FROM tableName WHERE field3 = '$value$' AND field2 = '$value$' AND field3 =
-			$value$
-		</query>
-		<query id="3">SELECT * FROM product UNION SELECT * from client</query>
-		<query id="4">SELECT * from client</query>
-		<query id="0">SELECT * FROM ?</query>
-		<query id="2">DELETE tableName FROM tableName WHERE field1=$value$</query>
+		<query id="1">SELECT * FROM product</query>
+		<query id="2">SELECT * from client WHERE id_client &#60; ?</query>
+		<query id="3">SELECT * from supplier</query>
 	</db>
-	<!--<db id="2">-->
-	<!--<query id="0">SELECT * FROM producto</query>-->
-	<!--<query id="1">INSERT INTO producto VALUES(?, ?)</query>-->
-	<!--<query id="2">UPDATE producto SET na_producto = ? WHERE id_producto = ?</query>-->
-	<!--</db>-->
 </queries>

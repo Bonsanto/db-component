@@ -11,20 +11,20 @@ import java.util.HashMap;
 import java.util.Objects;
 
 public class QueriesReader {
-	private HashMap<String, DBConnection> connections = new HashMap<>();
+	private HashMap<String, DBConnection> conns = new HashMap<>();
 
-	public HashMap<String, DBConnection> readQueries(String path, HashMap<String, DBConnection> connections) throws Exception {
+	public HashMap<String, DBConnection> readQueries(String path, HashMap<String, DBConnection> conns) throws Exception {
 		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 		DocumentBuilder db = dbf.newDocumentBuilder();
 		Document doc = db.parse(new File(path));
 		doc.getDocumentElement().normalize();
-		this.connections = connections;
+		this.conns = conns;
 
 		//todo: probably a log here..
 		if (Objects.equals(path, "")) throw new Exception("The file's path wasn't provided");
 
 		//todo: probably a log here
-		if (connections.size() == 0) throw new Exception("There aren't DBs available, verify the settings.xml");
+		if (conns.size() == 0) throw new Exception("There aren't DBs available, verify the settings.xml");
 
 		NodeList dbs = doc.getElementsByTagName("db");
 
@@ -37,7 +37,7 @@ public class QueriesReader {
 			}
 		}
 
-		return this.connections;
+		return this.conns;
 	}
 
 	private void readSimpleQuery(Node node) {
@@ -52,6 +52,6 @@ public class QueriesReader {
 		//Sentences for the queries.
 		String sentence = ((DeferredTextImpl) node).getData();
 
-		this.connections.get(db).queries.put(id, new Query(sentence));
+		this.conns.get(db).queries.put(id, new Query(sentence));
 	}
 }
