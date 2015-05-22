@@ -76,19 +76,21 @@ public class CSVWriter {
 		this.fileWriter.close();
 	}
 
-	//Constructor in case the separators are defined.
-	public CSVWriter(String path, String columnsSeparator, String rowsSeparator) throws IOException {
+	//Utility method that improves legibility, instantiates the buffers and other things.
+	private void setAll(String path, String cs, String rs) throws IOException {
 		this.fileWriter = new FileWriter(path);
 		this.printWriter = new PrintWriter(this.fileWriter);
-		this.columnsSeparator = columnsSeparator;
-		this.rowsSeparator = rowsSeparator;
+		this.columnsSeparator = cs;
+		this.rowsSeparator = rs;
+	}
+
+	//Constructor in case the separators are defined.
+	public CSVWriter(String path, String columnsSeparator, String rowsSeparator) throws IOException {
+		this.setAll(path, columnsSeparator, rowsSeparator);
 	}
 
 	//Constructor in case de separators are not defined.
 	public CSVWriter(String path) throws IOException {
-		this.fileWriter = new FileWriter(path);
-		this.printWriter = new PrintWriter(this.fileWriter);
-		this.columnsSeparator = DEFAULT_COLUMNS_SEPARATOR;
-		this.rowsSeparator = DEFAULT_ROWS_SEPARATOR;
+		this.setAll(path, DEFAULT_COLUMNS_SEPARATOR, DEFAULT_ROWS_SEPARATOR);
 	}
 }
