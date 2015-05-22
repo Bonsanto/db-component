@@ -2,6 +2,7 @@ package server;
 
 import dependencies.CSVWriter;
 import dependencies.JSON;
+import dependencies.LogHandler;
 import pack.*;
 
 import javax.jws.WebMethod;
@@ -11,14 +12,18 @@ import java.io.File;
 import java.io.IOException;
 import java.net.BindException;
 import java.security.InvalidParameterException;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Objects;
+import java.util.logging.Level;
 
 @WebService()
 public class Dispatcher {
 	private static HashMap<String, DBConnection> connections;
+	private static LogHandler logs;
 
 	//todo: add support for csv, WRITE IN DISK, SEND STATUS AND CONVERT BINARY TO ASCII 64.
 	//todo: Add a log register for all the queries to the dispatcher, to leave a witness of all the queries.
@@ -28,6 +33,7 @@ public class Dispatcher {
 		JSON jsonBuilder = new JSON();
 
 		try {
+			logs.write(Level.INFO, "Write Simple CSV method called");
 			CSVWriter csv = new CSVWriter(path);
 			DBConnection dbConn = connections.get(idDB);
 			Connection conn = dbConn.getDataSourceProvider().getConnection();
@@ -36,8 +42,10 @@ public class Dispatcher {
 			ArrayList<Query> queries = new ArrayList<>();
 			queries.add(new Query(query));
 
-			if (countParameters(queries) != params.length)
+			if (countParameters(queries) != params.length) {
+				logs.write(Level.SEVERE, "The number of parameters passed doesn't match with the number of expected number of parameters");
 				throw new InvalidParameterException("The number of parameters passed doesn't match with the number of expected number of parameters");
+			}
 
 			for (int i = 0; i < params.length; i++)
 				pst.setObject(i + 1, params[i]);
@@ -47,7 +55,7 @@ public class Dispatcher {
 				ResultSet rs = pst.executeQuery();
 
 				if (rs.next()) {
-					jsonBuilder.addAttribute("response", "success");
+					jsonBuilder.addAttribute("message", "success");
 					csv.writeCSV(rs);
 				} else
 					jsonBuilder.addAttribute("message", "not found");
@@ -62,20 +70,32 @@ public class Dispatcher {
 			//Close everything
 			close(pst, conn);
 		} catch (SQLException | IOException e) {
+			try {
+				logs.write(Level.SEVERE, e.getMessage());
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
 			e.printStackTrace();
 			jsonBuilder.addAttribute("message", e.getMessage());
 		} catch (NullPointerException e) {
+			try {
+				logs.write(Level.SEVERE, e.getMessage());
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
 			e.printStackTrace();
 			jsonBuilder.addAttribute("message", "query not found");
 		}
 		return jsonBuilder.getJson();
 	}
 
+	//Params types must match with the DB type.
 	@WebMethod
 	public String writeEntireCSV(String idDB, String idQuery, String path, Object... params) {
 		JSON jsonBuilder = new JSON();
 
 		try {
+			logs.write(Level.INFO, "Write Entire CSV method called");
 			CSVWriter csv = new CSVWriter(path);
 			DBConnection dbConn = connections.get(idDB);
 			Connection conn = dbConn.getDataSourceProvider().getConnection();
@@ -95,7 +115,7 @@ public class Dispatcher {
 				ResultSet rs = pst.executeQuery();
 
 				if (rs.next()) {
-					jsonBuilder.addAttribute("response", "success");
+					jsonBuilder.addAttribute("message", "success");
 					csv.writeCompoundCSV(rs);
 				} else
 					jsonBuilder.addAttribute("message", "not found");
@@ -110,9 +130,19 @@ public class Dispatcher {
 			//Close everything
 			close(pst, conn);
 		} catch (SQLException | IOException e) {
+			try {
+				logs.write(Level.SEVERE, e.getMessage());
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
 			e.printStackTrace();
 			jsonBuilder.addAttribute("message", e.getMessage());
 		} catch (NullPointerException e) {
+			try {
+				logs.write(Level.SEVERE, e.getMessage());
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
 			e.printStackTrace();
 			jsonBuilder.addAttribute("message", "query not found");
 		}
@@ -124,6 +154,7 @@ public class Dispatcher {
 		JSON jsonBuilder = new JSON();
 
 		try {
+			logs.write(Level.INFO, "QueryJSON method was called");
 			DBConnection dbConn = connections.get(idDB);
 			Connection conn = dbConn.getDataSourceProvider().getConnection();
 			String query = dbConn.queries.get(idQuery).getSentence();
@@ -155,9 +186,15 @@ public class Dispatcher {
 			//Close everything
 			close(pst, conn);
 			//todo: probably add a log here.
-		} catch (Exception e) {
+		} catch (SQLException e) {
+			try {
+				logs.write(Level.SEVERE, e.getMessage());
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
 			e.printStackTrace();
-			jsonBuilder.addAttribute("message", e.getMessage());
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 		return jsonBuilder.getJson();
 	}
@@ -167,6 +204,7 @@ public class Dispatcher {
 		JSON jsonBuilder = new JSON();
 
 		try {
+			logs.write(Level.INFO, "Make Transaction query called");
 			DBConnection dbConn = connections.get(idDB);
 			Connection conn = dbConn.getDataSourceProvider().getConnection();
 			PreparedStatement pst;
@@ -207,8 +245,15 @@ public class Dispatcher {
 			conn.setAutoCommit(true);
 			conn.close();
 		} catch (SQLException | InvalidParameterException e) {
+			try {
+				logs.write(Level.SEVERE, e.getMessage());
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
 			e.printStackTrace();
 			jsonBuilder.addAttribute("message", e.getMessage());
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 		return jsonBuilder.getJson();
 	}
@@ -236,16 +281,22 @@ public class Dispatcher {
 
 	public static void main(String[] argv) {
 		try {
-			SettingsReader reader = new SettingsReader();
+			ConnectionsReader connReader = new ConnectionsReader();
 			QueriesReader queriesReader = new QueriesReader();
-			connections = reader.readSettings(new File("").getAbsolutePath() +
-					File.separator + "config" + File.separator + "settings.xml");
+			SettingsReader settingsReader = new SettingsReader();
+			HashMap<String, String> config;
+			logs = new LogHandler();
+
+			config = settingsReader.readSettings(new File("").getAbsolutePath() +
+					File.separator + "config" + File.separator + "settings.xml", logs);
+			connections = connReader.readSettings(new File("").getAbsolutePath() +
+					File.separator + "config" + File.separator + "connections.xml", logs);
 			connections = queriesReader.readQueries(new File("").getAbsolutePath() +
-					File.separator + "config" + File.separator + "queries.xml", connections);
+					File.separator + "config" + File.separator + "queries.xml", connections, logs);
 
 			Dispatcher implementor = new Dispatcher();
-			String address = "http://0.0.0.0:9000/Dispatcher";
-			System.out.println(address);
+			String address = "http://" + config.get("ip") + ":" + config.get("port") + "/" + config.get("name");
+			System.out.println("Server wsdl can be found in http://localhost:" + config.get("port") + "/" + config.get("name"));
 			Endpoint.publish(address, implementor);
 			//todo: add log for these errors
 		} catch (BindException e) {
@@ -258,6 +309,4 @@ public class Dispatcher {
 			e.printStackTrace();
 		}
 	}
-
-
 }

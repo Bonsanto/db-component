@@ -13,4 +13,7 @@
 		<query id="2">SELECT * from client WHERE id_client &#60; ?</query>
 		<query id="3">SELECT * from supplier</query>
 	</db>
+	<!--<db id="2">-->
+	<!--<query id="1">SELECT * FROM testtable</query>-->
+	<!--</db>-->
 </queries>

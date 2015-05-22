@@ -1,54 +1,5 @@
 <settings>
-	<db id="0">
-		<sgbd>postgresql</sgbd>
-		<url>jdbc:postgresql://localhost:5432/pokemon</url>
-		<driverClassName>org.postgresql.Driver</driverClassName>
-		<userName>postgres</userName>
-		<password>masterkey</password>
-		<jmxEnabled>true</jmxEnabled>
-		<testWhileIdle>true</testWhileIdle>
-		<testOnBorrow>true</testOnBorrow>
-		<testOnReturn>false</testOnReturn>
-		<logAbandoned>true</logAbandoned>
-		<removeAbandoned>true</removeAbandoned>
-		<validationInterval>30000</validationInterval>
-		<timeBetweenEvictionsRunMillis>30000</timeBetweenEvictionsRunMillis>
-		<maxActive>100</maxActive>
-		<initialSize>10</initialSize>
-		<maxWait>10000</maxWait>
-		<removeAbandonedTimeout>60</removeAbandonedTimeout>
-		<minEvictableIdleTimeMillis>30000</minEvictableIdleTimeMillis>
-		<minIdle>10</minIdle>
-		<validationQuery>SELECT 1</validationQuery>
-		<jdbcInterceptors>
-			org.apache.tomcat.jdbc.pool.interceptor.ConnectionState;
-			org.apache.tomcat.jdbc.pool.interceptor.StatementFinalizer
-		</jdbcInterceptors>
-	</db>
-	<db id="1">
-		<sgbd>postgresql</sgbd>
-		<url>jdbc:postgresql://192.168.0.111:5432/rest_db</url>
-		<driverClassName>org.postgresql.Driver</driverClassName>
-		<userName>postgres</userName>
-		<password>masterkey</password>
-		<jmxEnabled>true</jmxEnabled>
-		<testWhileIdle>true</testWhileIdle>
-		<testOnBorrow>true</testOnBorrow>
-		<testOnReturn>false</testOnReturn>
-		<logAbandoned>true</logAbandoned>
-		<removeAbandoned>true</removeAbandoned>
-		<validationInterval>30000</validationInterval>
-		<timeBetweenEvictionsRunMillis>30000</timeBetweenEvictionsRunMillis>
-		<maxActive>100</maxActive>
-		<initialSize>10</initialSize>
-		<maxWait>10000</maxWait>
-		<removeAbandonedTimeout>60</removeAbandonedTimeout>
-		<minEvictableIdleTimeMillis>30000</minEvictableIdleTimeMillis>
-		<minIdle>10</minIdle>
-		<validationQuery>SELECT 1</validationQuery>
-		<jdbcInterceptors>
-			org.apache.tomcat.jdbc.pool.interceptor.ConnectionState;
-			org.apache.tomcat.jdbc.pool.interceptor.StatementFinalizer
-		</jdbcInterceptors>
-	</db>
+<ip>0.0.0.0</ip>
+<port>9000</port>
+<name>Dispatcher</name>
 </settings>
