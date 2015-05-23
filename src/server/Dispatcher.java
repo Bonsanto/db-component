@@ -10,7 +10,6 @@ import javax.jws.WebService;
 import javax.xml.ws.Endpoint;
 import java.io.File;
 import java.io.IOException;
-import java.net.BindException;
 import java.security.InvalidParameterException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -18,6 +17,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Objects;
 import java.util.logging.Level;
 
 @WebService()
@@ -29,7 +29,7 @@ public class Dispatcher {
 	//todo: Add a log register for all the queries to the dispatcher, to leave a witness of all the queries.
 
 	@WebMethod
-	public String writeSimpleCSV(String idDB, String idQuery, String path, Object... params) {
+	public String writeSimpleCSV(String idDB, String idQuery, String path, Object... params) throws IOException {
 		JSON jsonBuilder = new JSON();
 
 		try {
@@ -42,10 +42,8 @@ public class Dispatcher {
 			ArrayList<Query> queries = new ArrayList<>();
 			queries.add(new Query(query));
 
-			if (countParameters(queries) != params.length) {
-				logs.write(Level.SEVERE, "The number of parameters passed doesn't match with the number of expected number of parameters");
+			if (countParameters(queries) != params.length)
 				throw new InvalidParameterException("The number of parameters passed doesn't match with the number of expected number of parameters");
-			}
 
 			for (int i = 0; i < params.length; i++)
 				pst.setObject(i + 1, params[i]);
@@ -55,7 +53,7 @@ public class Dispatcher {
 				ResultSet rs = pst.executeQuery();
 
 				if (rs.next()) {
-					jsonBuilder.addAttribute("message", "success");
+					jsonBuilder.addAttribute("message", "Success");
 					csv.writeCSV(rs);
 				} else
 					jsonBuilder.addAttribute("message", "not found");
@@ -69,29 +67,18 @@ public class Dispatcher {
 
 			//Close everything
 			close(pst, conn);
-		} catch (SQLException | IOException e) {
-			try {
-				logs.write(Level.SEVERE, e.getMessage());
-			} catch (IOException e1) {
-				e1.printStackTrace();
-			}
+		} catch (Exception e) {
+			jsonBuilder.addAttribute("message", (Objects.equals(e.getClass().getName(), NullPointerException.class.getName())) ?
+					"The requested query was not found" : e.getMessage());
+			logs.write(Level.SEVERE, e.getMessage());
 			e.printStackTrace();
-			jsonBuilder.addAttribute("message", e.getMessage());
-		} catch (NullPointerException e) {
-			try {
-				logs.write(Level.SEVERE, e.getMessage());
-			} catch (IOException e1) {
-				e1.printStackTrace();
-			}
-			e.printStackTrace();
-			jsonBuilder.addAttribute("message", "query not found");
 		}
 		return jsonBuilder.getJson();
 	}
 
 	//Params types must match with the DB type.
 	@WebMethod
-	public String writeEntireCSV(String idDB, String idQuery, String path, Object... params) {
+	public String writeEntireCSV(String idDB, String idQuery, String path, Object... params) throws IOException {
 		JSON jsonBuilder = new JSON();
 
 		try {
@@ -115,42 +102,31 @@ public class Dispatcher {
 				ResultSet rs = pst.executeQuery();
 
 				if (rs.next()) {
-					jsonBuilder.addAttribute("message", "success");
+					jsonBuilder.addAttribute("message", "Success");
 					csv.writeCompoundCSV(rs);
 				} else
-					jsonBuilder.addAttribute("message", "not found");
+					jsonBuilder.addAttribute("message", "The query didn't retrieve data, because the ResultSet was empty");
 
 				rs.close();
 			}
 			//In case it is a INSERT, UPDATE, or DELETE.
 			else {
-				jsonBuilder.addAttribute("message", "query wouldn't retrieve data");
+				jsonBuilder.addAttribute("message", "The query didn't retrieve data, because it didn't have a SELECT");
 			}
 
 			//Close everything
 			close(pst, conn);
-		} catch (SQLException | IOException e) {
-			try {
-				logs.write(Level.SEVERE, e.getMessage());
-			} catch (IOException e1) {
-				e1.printStackTrace();
-			}
+		} catch (Exception e) {
+			jsonBuilder.addAttribute("message", (Objects.equals(e.getClass().getName(), NullPointerException.class.getName())) ?
+					"The requested query was not found" : e.getMessage());
 			e.printStackTrace();
-			jsonBuilder.addAttribute("message", e.getMessage());
-		} catch (NullPointerException e) {
-			try {
-				logs.write(Level.SEVERE, e.getMessage());
-			} catch (IOException e1) {
-				e1.printStackTrace();
-			}
-			e.printStackTrace();
-			jsonBuilder.addAttribute("message", "query not found");
+			logs.write(Level.SEVERE, e.getMessage());
 		}
 		return jsonBuilder.getJson();
 	}
 
 	@WebMethod
-	public String queryJSON(String idDB, String idQuery, Object... params) {
+	public String queryJSON(String idDB, String idQuery, Object... params) throws IOException {
 		JSON jsonBuilder = new JSON();
 
 		try {
@@ -170,37 +146,31 @@ public class Dispatcher {
 				if (rs.next())
 					jsonBuilder.addAttribute("response", rs);
 				else
-					jsonBuilder.addAttribute("message", "not found");
+					jsonBuilder.addAttribute("message", "The query didn't retrieve data, because the ResultSet was empty");
 
 				rs.close();
 			}
 			//In case it is a INSERT, UPDATE, or DELETE.
 			else {
-				//In case the query was successfully executed.
+				//In case the query was Successfully executed.
 				if (pst.execute())
-					jsonBuilder.addAttribute("message", "success");
+					jsonBuilder.addAttribute("message", "Success");
 				else
-					jsonBuilder.addAttribute("message", "query was unsuccessful");
+					jsonBuilder.addAttribute("message", "The query didn't retrieve data, because it didn't have a SELECT");
 			}
 
 			//Close everything
 			close(pst, conn);
-			//todo: probably add a log here.
-		} catch (SQLException e) {
-			try {
-				logs.write(Level.SEVERE, e.getMessage());
-			} catch (IOException e1) {
-				e1.printStackTrace();
-			}
+		} catch (Exception e) {
 			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
+			logs.write(Level.SEVERE, e.getMessage());
+			jsonBuilder.addAttribute("message", e.getMessage());
 		}
 		return jsonBuilder.getJson();
 	}
 
 	@WebMethod
-	public String makeTransaction(String idDB, String[] idQueries, Object... parameters) {
+	public String makeTransaction(String idDB, String[] idQueries, Object... parameters) throws IOException {
 		JSON jsonBuilder = new JSON();
 
 		try {
@@ -240,20 +210,14 @@ public class Dispatcher {
 				}
 				pst.close();
 			}
-			jsonBuilder.addAttribute("message", "success");
+			jsonBuilder.addAttribute("message", "Success");
 			conn.commit();
 			conn.setAutoCommit(true);
 			conn.close();
-		} catch (SQLException | InvalidParameterException e) {
-			try {
-				logs.write(Level.SEVERE, e.getMessage());
-			} catch (IOException e1) {
-				e1.printStackTrace();
-			}
+		} catch (Exception e) {
 			e.printStackTrace();
+			logs.write(Level.SEVERE, e.getMessage());
 			jsonBuilder.addAttribute("message", e.getMessage());
-		} catch (IOException e) {
-			e.printStackTrace();
 		}
 		return jsonBuilder.getJson();
 	}
@@ -279,7 +243,7 @@ public class Dispatcher {
 		con.close();
 	}
 
-	public static void main(String[] argv) {
+	public static void main(String[] argv) throws IOException {
 		try {
 			ConnectionsReader connReader = new ConnectionsReader();
 			QueriesReader queriesReader = new QueriesReader();
@@ -296,17 +260,11 @@ public class Dispatcher {
 
 			Dispatcher implementor = new Dispatcher();
 			String address = "http://" + config.get("ip") + ":" + config.get("port") + "/" + config.get("name");
-			System.out.println("Server wsdl can be found in http://localhost:" + config.get("port") + "/" + config.get("name"));
+			System.out.println("Server wsdl can be found on http://localhost:" + config.get("port") + "/" + config.get("name"));
 			Endpoint.publish(address, implementor);
-			//todo: add log for these errors
-		} catch (BindException e) {
-			e.printStackTrace();
-		} catch (StringIndexOutOfBoundsException e) {
-			e.printStackTrace();
-		} catch (SQLException e) {
-			e.printStackTrace();
 		} catch (Exception e) {
 			e.printStackTrace();
+			logs.write(Level.SEVERE, e.getMessage());
 		}
 	}
 }
