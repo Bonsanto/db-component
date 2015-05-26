@@ -26,12 +26,15 @@ public class ObjectFactory {
 
     private final static QName _WriteSimpleCSV_QNAME = new QName("http://server/", "writeSimpleCSV");
     private final static QName _MakeTransactionResponse_QNAME = new QName("http://server/", "makeTransactionResponse");
+    private final static QName _WriteJSON_QNAME = new QName("http://server/", "writeJSON");
     private final static QName _QueryJSONResponse_QNAME = new QName("http://server/", "queryJSONResponse");
     private final static QName _MakeTransaction_QNAME = new QName("http://server/", "makeTransaction");
     private final static QName _WriteSimpleCSVResponse_QNAME = new QName("http://server/", "writeSimpleCSVResponse");
+    private final static QName _IOException_QNAME = new QName("http://server/", "IOException");
     private final static QName _WriteEntireCSVResponse_QNAME = new QName("http://server/", "writeEntireCSVResponse");
     private final static QName _QueryJSON_QNAME = new QName("http://server/", "queryJSON");
     private final static QName _WriteEntireCSV_QNAME = new QName("http://server/", "writeEntireCSV");
+    private final static QName _WriteJSONResponse_QNAME = new QName("http://server/", "writeJSONResponse");
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: pack
@@ -46,6 +49,14 @@ public class ObjectFactory {
      */
     public WriteEntireCSV createWriteEntireCSV() {
         return new WriteEntireCSV();
+    }
+
+    /**
+     * Create an instance of {@link WriteJSONResponse }
+     * 
+     */
+    public WriteJSONResponse createWriteJSONResponse() {
+        return new WriteJSONResponse();
     }
 
     /**
@@ -70,6 +81,14 @@ public class ObjectFactory {
      */
     public WriteSimpleCSVResponse createWriteSimpleCSVResponse() {
         return new WriteSimpleCSVResponse();
+    }
+
+    /**
+     * Create an instance of {@link IOException }
+     * 
+     */
+    public IOException createIOException() {
+        return new IOException();
     }
 
     /**
@@ -105,6 +124,14 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link WriteJSON }
+     * 
+     */
+    public WriteJSON createWriteJSON() {
+        return new WriteJSON();
+    }
+
+    /**
      * Create an instance of {@link JAXBElement }{@code <}{@link WriteSimpleCSV }{@code >}}
      * 
      */
@@ -120,6 +147,15 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "http://server/", name = "makeTransactionResponse")
     public JAXBElement<MakeTransactionResponse> createMakeTransactionResponse(MakeTransactionResponse value) {
         return new JAXBElement<MakeTransactionResponse>(_MakeTransactionResponse_QNAME, MakeTransactionResponse.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link WriteJSON }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://server/", name = "writeJSON")
+    public JAXBElement<WriteJSON> createWriteJSON(WriteJSON value) {
+        return new JAXBElement<WriteJSON>(_WriteJSON_QNAME, WriteJSON.class, null, value);
     }
 
     /**
@@ -150,6 +186,15 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link IOException }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://server/", name = "IOException")
+    public JAXBElement<IOException> createIOException(IOException value) {
+        return new JAXBElement<IOException>(_IOException_QNAME, IOException.class, null, value);
+    }
+
+    /**
      * Create an instance of {@link JAXBElement }{@code <}{@link WriteEntireCSVResponse }{@code >}}
      * 
      */
@@ -174,6 +219,15 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "http://server/", name = "writeEntireCSV")
     public JAXBElement<WriteEntireCSV> createWriteEntireCSV(WriteEntireCSV value) {
         return new JAXBElement<WriteEntireCSV>(_WriteEntireCSV_QNAME, WriteEntireCSV.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link WriteJSONResponse }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://server/", name = "writeJSONResponse")
+    public JAXBElement<WriteJSONResponse> createWriteJSONResponse(WriteJSONResponse value) {
+        return new JAXBElement<WriteJSONResponse>(_WriteJSONResponse_QNAME, WriteJSONResponse.class, null, value);
     }
 
 }

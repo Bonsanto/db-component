@@ -8,6 +8,7 @@ import javax.jws.WebResult;
 import javax.jws.WebService;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.ws.Action;
+import javax.xml.ws.FaultAction;
 import javax.xml.ws.RequestWrapper;
 import javax.xml.ws.ResponseWrapper;
 
@@ -33,12 +34,15 @@ public interface Dispatcher {
      * @param arg0
      * @return
      *     returns java.lang.String
+     * @throws IOException_Exception
      */
     @WebMethod
     @WebResult(targetNamespace = "")
     @RequestWrapper(localName = "writeEntireCSV", targetNamespace = "http://server/", className = "pack.WriteEntireCSV")
     @ResponseWrapper(localName = "writeEntireCSVResponse", targetNamespace = "http://server/", className = "pack.WriteEntireCSVResponse")
-    @Action(input = "http://server/Dispatcher/writeEntireCSVRequest", output = "http://server/Dispatcher/writeEntireCSVResponse")
+    @Action(input = "http://server/Dispatcher/writeEntireCSVRequest", output = "http://server/Dispatcher/writeEntireCSVResponse", fault = {
+        @FaultAction(className = IOException_Exception.class, value = "http://server/Dispatcher/writeEntireCSV/Fault/IOException")
+    })
     public String writeEntireCSV(
         @WebParam(name = "arg0", targetNamespace = "")
         String arg0,
@@ -47,7 +51,9 @@ public interface Dispatcher {
         @WebParam(name = "arg2", targetNamespace = "")
         String arg2,
         @WebParam(name = "arg3", targetNamespace = "")
-        List<Object> arg3);
+        List<Object> arg3)
+        throws IOException_Exception
+    ;
 
     /**
      * 
@@ -57,12 +63,15 @@ public interface Dispatcher {
      * @param arg0
      * @return
      *     returns java.lang.String
+     * @throws IOException_Exception
      */
     @WebMethod
     @WebResult(targetNamespace = "")
     @RequestWrapper(localName = "writeSimpleCSV", targetNamespace = "http://server/", className = "pack.WriteSimpleCSV")
     @ResponseWrapper(localName = "writeSimpleCSVResponse", targetNamespace = "http://server/", className = "pack.WriteSimpleCSVResponse")
-    @Action(input = "http://server/Dispatcher/writeSimpleCSVRequest", output = "http://server/Dispatcher/writeSimpleCSVResponse")
+    @Action(input = "http://server/Dispatcher/writeSimpleCSVRequest", output = "http://server/Dispatcher/writeSimpleCSVResponse", fault = {
+        @FaultAction(className = IOException_Exception.class, value = "http://server/Dispatcher/writeSimpleCSV/Fault/IOException")
+    })
     public String writeSimpleCSV(
         @WebParam(name = "arg0", targetNamespace = "")
         String arg0,
@@ -71,7 +80,38 @@ public interface Dispatcher {
         @WebParam(name = "arg2", targetNamespace = "")
         String arg2,
         @WebParam(name = "arg3", targetNamespace = "")
-        List<Object> arg3);
+        List<Object> arg3)
+        throws IOException_Exception
+    ;
+
+    /**
+     * 
+     * @param arg3
+     * @param arg2
+     * @param arg1
+     * @param arg0
+     * @return
+     *     returns java.lang.String
+     * @throws IOException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "writeJSON", targetNamespace = "http://server/", className = "pack.WriteJSON")
+    @ResponseWrapper(localName = "writeJSONResponse", targetNamespace = "http://server/", className = "pack.WriteJSONResponse")
+    @Action(input = "http://server/Dispatcher/writeJSONRequest", output = "http://server/Dispatcher/writeJSONResponse", fault = {
+        @FaultAction(className = IOException_Exception.class, value = "http://server/Dispatcher/writeJSON/Fault/IOException")
+    })
+    public String writeJSON(
+        @WebParam(name = "arg0", targetNamespace = "")
+        String arg0,
+        @WebParam(name = "arg1", targetNamespace = "")
+        String arg1,
+        @WebParam(name = "arg2", targetNamespace = "")
+        String arg2,
+        @WebParam(name = "arg3", targetNamespace = "")
+        List<Object> arg3)
+        throws IOException_Exception
+    ;
 
     /**
      * 
@@ -80,19 +120,24 @@ public interface Dispatcher {
      * @param arg0
      * @return
      *     returns java.lang.String
+     * @throws IOException_Exception
      */
     @WebMethod
     @WebResult(targetNamespace = "")
     @RequestWrapper(localName = "queryJSON", targetNamespace = "http://server/", className = "pack.QueryJSON")
     @ResponseWrapper(localName = "queryJSONResponse", targetNamespace = "http://server/", className = "pack.QueryJSONResponse")
-    @Action(input = "http://server/Dispatcher/queryJSONRequest", output = "http://server/Dispatcher/queryJSONResponse")
+    @Action(input = "http://server/Dispatcher/queryJSONRequest", output = "http://server/Dispatcher/queryJSONResponse", fault = {
+        @FaultAction(className = IOException_Exception.class, value = "http://server/Dispatcher/queryJSON/Fault/IOException")
+    })
     public String queryJSON(
         @WebParam(name = "arg0", targetNamespace = "")
         String arg0,
         @WebParam(name = "arg1", targetNamespace = "")
         String arg1,
         @WebParam(name = "arg2", targetNamespace = "")
-        List<Object> arg2);
+        List<Object> arg2)
+        throws IOException_Exception
+    ;
 
     /**
      * 
@@ -101,18 +146,23 @@ public interface Dispatcher {
      * @param arg0
      * @return
      *     returns java.lang.String
+     * @throws IOException_Exception
      */
     @WebMethod
     @WebResult(targetNamespace = "")
     @RequestWrapper(localName = "makeTransaction", targetNamespace = "http://server/", className = "pack.MakeTransaction")
     @ResponseWrapper(localName = "makeTransactionResponse", targetNamespace = "http://server/", className = "pack.MakeTransactionResponse")
-    @Action(input = "http://server/Dispatcher/makeTransactionRequest", output = "http://server/Dispatcher/makeTransactionResponse")
+    @Action(input = "http://server/Dispatcher/makeTransactionRequest", output = "http://server/Dispatcher/makeTransactionResponse", fault = {
+        @FaultAction(className = IOException_Exception.class, value = "http://server/Dispatcher/makeTransaction/Fault/IOException")
+    })
     public String makeTransaction(
         @WebParam(name = "arg0", targetNamespace = "")
         String arg0,
         @WebParam(name = "arg1", targetNamespace = "")
         List<String> arg1,
         @WebParam(name = "arg2", targetNamespace = "")
-        List<Object> arg2);
+        List<Object> arg2)
+        throws IOException_Exception
+    ;
 
 }

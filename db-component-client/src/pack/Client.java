@@ -2,6 +2,9 @@ package pack;
 
 import java.util.ArrayList;
 
+/**
+ * Created by Bonsanto on 5/26/2015.
+ */
 public class Client {
 	public static void main(String[] argv) {
 		Dispatcher d = new DispatcherService().getDispatcherPort();
@@ -19,13 +22,18 @@ public class Client {
 		String parameter = "cuchi3.jpg";
 		ArrayList<Object> params = new ArrayList<>();
 		params.add(parameter);
-		System.out.println(d.queryJSON("2", "2", params));
-		String json = d.queryJSON("2", "1", new ArrayList<>());
-		System.out.println(json);
-		System.out.println(d.writeEntireCSV("2", "1", "many pics.csv", new ArrayList<>()));
-		System.out.println(d.writeEntireCSV("2", "2", "one pic.csv", params));
-		System.out.println((System.nanoTime() - t) / 1000000000);
-
-		System.out.println(d.queryJSON("1", "3", new ArrayList<>()));
+		String json = null;
+		try {
+			System.out.println(d.queryJSON("2", "2", params));
+			json = d.queryJSON("2", "1", new ArrayList<>());
+			System.out.println(json);
+			System.out.println(d.writeEntireCSV("2", "1", "many pics.csv", new ArrayList<>()));
+			System.out.println(d.writeEntireCSV("2", "2", "one pic.csv", params));
+			System.out.println((System.nanoTime() - t) / 1000000000);
+			System.out.println(d.queryJSON("1", "3", new ArrayList<>()));
+			System.out.println(d.writeJSON("1", "3", "json.json", new ArrayList<>()));
+		} catch (IOException_Exception e) {
+			e.printStackTrace();
+		}
 	}
 }

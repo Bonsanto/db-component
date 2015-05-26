@@ -99,3 +99,4 @@ crashlytics-build.properties
 
 
 *.csv
+*.json

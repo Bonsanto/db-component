@@ -10,11 +10,20 @@
 <message name="writeEntireCSVResponse">
 <part name="parameters" element="tns:writeEntireCSVResponse"/>
 </message>
+<message name="IOException">
+<part name="fault" element="tns:IOException"/>
+</message>
 <message name="writeSimpleCSV">
 <part name="parameters" element="tns:writeSimpleCSV"/>
 </message>
 <message name="writeSimpleCSVResponse">
 <part name="parameters" element="tns:writeSimpleCSVResponse"/>
+</message>
+<message name="writeJSON">
+<part name="parameters" element="tns:writeJSON"/>
+</message>
+<message name="writeJSONResponse">
+<part name="parameters" element="tns:writeJSONResponse"/>
 </message>
 <message name="queryJSON">
 <part name="parameters" element="tns:queryJSON"/>
@@ -32,18 +41,27 @@
 <operation name="writeEntireCSV">
 <input wsam:Action="http://server/Dispatcher/writeEntireCSVRequest" message="tns:writeEntireCSV"/>
 <output wsam:Action="http://server/Dispatcher/writeEntireCSVResponse" message="tns:writeEntireCSVResponse"/>
+<fault message="tns:IOException" name="IOException" wsam:Action="http://server/Dispatcher/writeEntireCSV/Fault/IOException"/>
 </operation>
 <operation name="writeSimpleCSV">
 <input wsam:Action="http://server/Dispatcher/writeSimpleCSVRequest" message="tns:writeSimpleCSV"/>
 <output wsam:Action="http://server/Dispatcher/writeSimpleCSVResponse" message="tns:writeSimpleCSVResponse"/>
+<fault message="tns:IOException" name="IOException" wsam:Action="http://server/Dispatcher/writeSimpleCSV/Fault/IOException"/>
+</operation>
+<operation name="writeJSON">
+<input wsam:Action="http://server/Dispatcher/writeJSONRequest" message="tns:writeJSON"/>
+<output wsam:Action="http://server/Dispatcher/writeJSONResponse" message="tns:writeJSONResponse"/>
+<fault message="tns:IOException" name="IOException" wsam:Action="http://server/Dispatcher/writeJSON/Fault/IOException"/>
 </operation>
 <operation name="queryJSON">
 <input wsam:Action="http://server/Dispatcher/queryJSONRequest" message="tns:queryJSON"/>
 <output wsam:Action="http://server/Dispatcher/queryJSONResponse" message="tns:queryJSONResponse"/>
+<fault message="tns:IOException" name="IOException" wsam:Action="http://server/Dispatcher/queryJSON/Fault/IOException"/>
 </operation>
 <operation name="makeTransaction">
 <input wsam:Action="http://server/Dispatcher/makeTransactionRequest" message="tns:makeTransaction"/>
 <output wsam:Action="http://server/Dispatcher/makeTransactionResponse" message="tns:makeTransactionResponse"/>
+<fault message="tns:IOException" name="IOException" wsam:Action="http://server/Dispatcher/makeTransaction/Fault/IOException"/>
 </operation>
 </portType>
 <binding name="DispatcherPortBinding" type="tns:Dispatcher">
@@ -56,6 +74,9 @@
 <output>
 <soap:body use="literal"/>
 </output>
+<fault name="IOException">
+<soap:fault name="IOException" use="literal"/>
+</fault>
 </operation>
 <operation name="writeSimpleCSV">
 <soap:operation soapAction=""/>
@@ -65,6 +86,21 @@
 <output>
 <soap:body use="literal"/>
 </output>
+<fault name="IOException">
+<soap:fault name="IOException" use="literal"/>
+</fault>
+</operation>
+<operation name="writeJSON">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+<fault name="IOException">
+<soap:fault name="IOException" use="literal"/>
+</fault>
 </operation>
 <operation name="queryJSON">
 <soap:operation soapAction=""/>
@@ -74,6 +110,9 @@
 <output>
 <soap:body use="literal"/>
 </output>
+<fault name="IOException">
+<soap:fault name="IOException" use="literal"/>
+</fault>
 </operation>
 <operation name="makeTransaction">
 <soap:operation soapAction=""/>
@@ -83,6 +122,9 @@
 <output>
 <soap:body use="literal"/>
 </output>
+<fault name="IOException">
+<soap:fault name="IOException" use="literal"/>
+</fault>
 </operation>
 </binding>
 <service name="DispatcherService">

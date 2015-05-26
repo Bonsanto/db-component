@@ -2,6 +2,7 @@ package server;
 
 import dependencies.CSVWriter;
 import dependencies.JSON;
+import dependencies.JSONWriter;
 import dependencies.LogHandler;
 import pack.*;
 
@@ -126,6 +127,50 @@ public class Dispatcher {
 	}
 
 	@WebMethod
+	public String writeJSON(String idDB, String idQuery, String path, Object... params) throws IOException {
+		JSON jsonBuilder = new JSON();
+
+		try {
+			logs.write(Level.INFO, "WriteJSON method was called");
+			DBConnection dbConn = connections.get(idDB);
+			JSONWriter jsonWriter = new JSONWriter(path);
+			Connection conn = dbConn.getDataSourceProvider().getConnection();
+			String query = dbConn.queries.get(idQuery).getSentence();
+			PreparedStatement pst = conn.prepareStatement(query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+
+			for (int i = 0; i < params.length; i++) {
+				pst.setObject(i + 1, params[i]);
+			}
+
+			//In case it is a SELECT.
+			if (query.regionMatches(true, 0, "select", 0, 6)) {
+				ResultSet rs = pst.executeQuery();
+
+				if (rs.next()) {
+					jsonWriter.writeJSON(rs);
+					jsonBuilder.addAttribute("message", "Success");
+				} else
+					jsonBuilder.addAttribute("message", "The query didn't retrieve data, because the ResultSet was empty");
+
+				rs.close();
+			}
+			//In case it is a INSERT, UPDATE, or DELETE.
+			else {
+				//In case the query was Successfully executed.
+				if (pst.execute())
+					jsonBuilder.addAttribute("message", "Success");
+				else
+					jsonBuilder.addAttribute("message", "The query didn't retrieve data, because it didn't have a SELECT");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			logs.write(Level.SEVERE, e.getMessage());
+			jsonBuilder.addAttribute("message", e.getMessage());
+		}
+		return jsonBuilder.getJson();
+	}
+
+	@WebMethod
 	public String queryJSON(String idDB, String idQuery, Object... params) throws IOException {
 		JSON jsonBuilder = new JSON();
 
@@ -223,6 +268,7 @@ public class Dispatcher {
 	}
 
 	//Counts the number of parameters in the array of transactions.
+
 	private int countParameters(ArrayList<Query> queries) {
 		int number = 0;
 

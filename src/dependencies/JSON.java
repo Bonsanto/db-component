@@ -1,6 +1,7 @@
 package dependencies;
 
 import sun.misc.BASE64Encoder;
+
 import java.lang.reflect.Array;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -64,12 +65,12 @@ public class JSON {
 				stb.append(quote);
 				stb.append(attribute);
 				stb.append(quote);
-				stb.append(": ");
+				stb.append(":");
 				stb.append(quote);
 				json = stb.toString();
 				stb.append((new BASE64Encoder().encode((byte[]) value)).replaceAll("\n|\r", ""));
 				stb.append(quote);
-				stb.append(", ");
+				stb.append(",");
 				json = stb.toString();
 			} else {
 				int length = Array.getLength(value);
@@ -82,7 +83,7 @@ public class JSON {
 			stb.append(quote);
 			stb.append(attribute);
 			stb.append(quote);
-			stb.append(": ");
+			stb.append(":");
 			json = stb.toString();
 
 			if (value instanceof JSON) {
@@ -94,7 +95,7 @@ public class JSON {
 			} else {
 				stb.append(value);
 			}
-			stb.append(", ");
+			stb.append(",");
 			json = stb.toString();
 		}
 	}
@@ -111,27 +112,27 @@ public class JSON {
 		for (Object aValue : value) {
 			if (aValue instanceof JSON) {
 				stb.append(((JSON) aValue).json);
-				stb.append(", ");
+				stb.append(",");
 				json = stb.toString();
 			} else if (aValue instanceof String) {
 				stb.append(quote);
 				stb.append(aValue);
 				stb.append(quote);
-				stb.append(", ");
+				stb.append(",");
 				json = stb.toString();
 			} else {
 				stb.append(aValue);
-				stb.append(", ");
+				stb.append(",");
 				json = stb.toString();
 			}
 		}
 		if (value.length > 0) {
 			stb.delete(0, stb.length());
-			stb.append(json.substring(0, json.length() - 2));
-			stb.append("], ");
+			stb.append(json.substring(0, json.length() - 1));
+			stb.append("],");
 			json = stb.toString();
 		} else {
-			stb.append("], ");
+			stb.append("],");
 			json = stb.toString();
 		}
 
@@ -139,7 +140,7 @@ public class JSON {
 
 	private void build() {
 		StringBuilder stb = new StringBuilder();
-		stb.append(json.substring(0, json.length() - 2));
+		stb.append(json.substring(0, json.length() - 1));
 		stb.append("}");
 		json = stb.toString();
 		built = true;
