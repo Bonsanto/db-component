@@ -1,7 +1,6 @@
 package dependencies;
 
 import sun.misc.BASE64Encoder;
-
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -37,13 +36,15 @@ public class CSVWriter {
 	//Method that provides a String with the name of all the columns of the resultset.
 	private String metaStringify(ResultSet rs) throws IOException, SQLException {
 		ResultSetMetaData rsmd = rs.getMetaData();
-		String[] columns = new String[rsmd.getColumnCount()];
-
+		StringBuilder[] stb = new StringBuilder[rsmd.getColumnCount()];
 		rs.first();
-		for (int i = 1; i <= columns.length; i++)
-			columns[i - 1] = rsmd.getColumnName(i);
 
-		return String.join(columnsSeparator, columns);
+		for (int i = 1; i <= stb.length; i++) {
+			stb[i - 1] = new StringBuilder();
+			stb[i - 1].append(rsmd.getColumnName(i));
+		}
+
+		return String.join(columnsSeparator, stb);
 	}
 
 	//Method that provides a String with the data attached to the resultset.
@@ -54,23 +55,24 @@ public class CSVWriter {
 		int columnNumber = rsmd.getColumnCount(),
 				rowsNumber = rs.getRow(),
 				currentRow = 0;
-		String[] rows = new String[rowsNumber];
-
+		StringBuilder[] stb = new StringBuilder[rowsNumber];
 		rs.first();
 
 		//Move through the resultset...
 		for (int rsRow = 1; rsRow <= rowsNumber; rsRow++) {
-			rows[currentRow] = "";
+			stb[currentRow] = new StringBuilder();
 
 			for (int i = 1; i <= columnNumber; i++) {
 				//todo: handle types here.
 				Object obj = rs.getObject(i);
-				rows[currentRow] += ((obj instanceof byte[]) ? (new BASE64Encoder().encode((byte[]) obj)).replaceAll("\n|\r", "") : obj.toString()) + (columnNumber == i ? "" : columnsSeparator);
+
+				stb[currentRow].append(((obj instanceof byte[]) ? (new BASE64Encoder().encode((byte[]) obj)).replaceAll("\n|\r", "") : obj.toString()));
+				stb[currentRow].append((columnNumber == i ? "" : columnsSeparator));
 			}
 			currentRow++;
 			rs.next();
 		}
-		return String.join(rowsSeparator, rows);
+		return String.join(rowsSeparator, stb);
 	}
 
 	//Method that flushes and closes the PrintWriter buffer and the FileWriter.

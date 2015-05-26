@@ -251,11 +251,6 @@ public class Dispatcher {
 			HashMap<String, String> config;
 			logs = new LogHandler();
 
-			String a = "Hello\n world\n now";
-
-			System.out.println(a);
-			System.out.println(a.replaceAll("\n",""));
-
 			config = settingsReader.readSettings(new File("").getAbsolutePath() +
 					File.separator + "config" + File.separator + "settings.xml", logs);
 			connections = connReader.readSettings(new File("").getAbsolutePath() +

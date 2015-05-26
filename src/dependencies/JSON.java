@@ -1,7 +1,6 @@
 package dependencies;
 
 import sun.misc.BASE64Encoder;
-
 import java.lang.reflect.Array;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -68,8 +67,6 @@ public class JSON {
 				stb.append(": ");
 				stb.append(quote);
 				json = stb.toString();
-//				XCceox
-				String a = (new BASE64Encoder().encode((byte[]) value)).replaceAll("\n|\r", "");
 				stb.append((new BASE64Encoder().encode((byte[]) value)).replaceAll("\n|\r", ""));
 				stb.append(quote);
 				stb.append(", ");
