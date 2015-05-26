@@ -36,10 +36,10 @@ public interface Dispatcher {
      */
     @WebMethod
     @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "writeSimpleCSV", targetNamespace = "http://server/", className = "pack.WriteSimpleCSV")
-    @ResponseWrapper(localName = "writeSimpleCSVResponse", targetNamespace = "http://server/", className = "pack.WriteSimpleCSVResponse")
-    @Action(input = "http://server/Dispatcher/writeSimpleCSVRequest", output = "http://server/Dispatcher/writeSimpleCSVResponse")
-    public String writeSimpleCSV(
+    @RequestWrapper(localName = "writeEntireCSV", targetNamespace = "http://server/", className = "pack.WriteEntireCSV")
+    @ResponseWrapper(localName = "writeEntireCSVResponse", targetNamespace = "http://server/", className = "pack.WriteEntireCSVResponse")
+    @Action(input = "http://server/Dispatcher/writeEntireCSVRequest", output = "http://server/Dispatcher/writeEntireCSVResponse")
+    public String writeEntireCSV(
         @WebParam(name = "arg0", targetNamespace = "")
         String arg0,
         @WebParam(name = "arg1", targetNamespace = "")
@@ -60,10 +60,10 @@ public interface Dispatcher {
      */
     @WebMethod
     @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "writeEntireCSV", targetNamespace = "http://server/", className = "pack.WriteEntireCSV")
-    @ResponseWrapper(localName = "writeEntireCSVResponse", targetNamespace = "http://server/", className = "pack.WriteEntireCSVResponse")
-    @Action(input = "http://server/Dispatcher/writeEntireCSVRequest", output = "http://server/Dispatcher/writeEntireCSVResponse")
-    public String writeEntireCSV(
+    @RequestWrapper(localName = "writeSimpleCSV", targetNamespace = "http://server/", className = "pack.WriteSimpleCSV")
+    @ResponseWrapper(localName = "writeSimpleCSVResponse", targetNamespace = "http://server/", className = "pack.WriteSimpleCSVResponse")
+    @Action(input = "http://server/Dispatcher/writeSimpleCSVRequest", output = "http://server/Dispatcher/writeSimpleCSVResponse")
+    public String writeSimpleCSV(
         @WebParam(name = "arg0", targetNamespace = "")
         String arg0,
         @WebParam(name = "arg1", targetNamespace = "")
@@ -83,14 +83,14 @@ public interface Dispatcher {
      */
     @WebMethod
     @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "makeTransaction", targetNamespace = "http://server/", className = "pack.MakeTransaction")
-    @ResponseWrapper(localName = "makeTransactionResponse", targetNamespace = "http://server/", className = "pack.MakeTransactionResponse")
-    @Action(input = "http://server/Dispatcher/makeTransactionRequest", output = "http://server/Dispatcher/makeTransactionResponse")
-    public String makeTransaction(
+    @RequestWrapper(localName = "queryJSON", targetNamespace = "http://server/", className = "pack.QueryJSON")
+    @ResponseWrapper(localName = "queryJSONResponse", targetNamespace = "http://server/", className = "pack.QueryJSONResponse")
+    @Action(input = "http://server/Dispatcher/queryJSONRequest", output = "http://server/Dispatcher/queryJSONResponse")
+    public String queryJSON(
         @WebParam(name = "arg0", targetNamespace = "")
         String arg0,
         @WebParam(name = "arg1", targetNamespace = "")
-        List<String> arg1,
+        String arg1,
         @WebParam(name = "arg2", targetNamespace = "")
         List<Object> arg2);
 
@@ -104,14 +104,14 @@ public interface Dispatcher {
      */
     @WebMethod
     @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "queryJSON", targetNamespace = "http://server/", className = "pack.QueryJSON")
-    @ResponseWrapper(localName = "queryJSONResponse", targetNamespace = "http://server/", className = "pack.QueryJSONResponse")
-    @Action(input = "http://server/Dispatcher/queryJSONRequest", output = "http://server/Dispatcher/queryJSONResponse")
-    public String queryJSON(
+    @RequestWrapper(localName = "makeTransaction", targetNamespace = "http://server/", className = "pack.MakeTransaction")
+    @ResponseWrapper(localName = "makeTransactionResponse", targetNamespace = "http://server/", className = "pack.MakeTransactionResponse")
+    @Action(input = "http://server/Dispatcher/makeTransactionRequest", output = "http://server/Dispatcher/makeTransactionResponse")
+    public String makeTransaction(
         @WebParam(name = "arg0", targetNamespace = "")
         String arg0,
         @WebParam(name = "arg1", targetNamespace = "")
-        String arg1,
+        List<String> arg1,
         @WebParam(name = "arg2", targetNamespace = "")
         List<Object> arg2);
 

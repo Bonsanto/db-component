@@ -1,5 +1,7 @@
 package dependencies;
 
+import sun.misc.BASE64Encoder;
+
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -61,7 +63,9 @@ public class CSVWriter {
 			rows[currentRow] = "";
 
 			for (int i = 1; i <= columnNumber; i++) {
-				rows[currentRow] += rs.getObject(i) + (columnNumber == i ? "" : columnsSeparator);
+				//todo: handle types here.
+				Object obj = rs.getObject(i);
+				rows[currentRow] += ((obj instanceof byte[]) ? (new BASE64Encoder().encode((byte[]) obj)).replaceAll("\n|\r", "") : obj.toString()) + (columnNumber == i ? "" : columnsSeparator);
 			}
 			currentRow++;
 			rs.next();

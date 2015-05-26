@@ -17,7 +17,7 @@ import javax.xml.ws.WebServiceFeature;
  * Generated source version: 2.2
  * 
  */
-@WebServiceClient(name = "DispatcherService", targetNamespace = "http://server/", wsdlLocation = "http://localhost:9000/Dispatcher?wsdl")
+@WebServiceClient(name = "DispatcherService", targetNamespace = "http://server/", wsdlLocation = "http://127.0.0.1:9000/Dispatcher?wsdl")
 public class DispatcherService
     extends Service
 {
@@ -30,7 +30,7 @@ public class DispatcherService
         URL url = null;
         WebServiceException e = null;
         try {
-            url = new URL("http://localhost:9000/Dispatcher?wsdl");
+            url = new URL("http://127.0.0.1:9000/Dispatcher?wsdl");
         } catch (MalformedURLException ex) {
             e = new WebServiceException(ex);
         }

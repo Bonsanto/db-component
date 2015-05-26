@@ -5,29 +5,55 @@
 		<driverClassName>org.postgresql.Driver</driverClassName>
 		<userName>postgres</userName>
 		<password>masterkey</password>
-		<jmxEnabled>true</jmxEnabled>
-		<testWhileIdle>true</testWhileIdle>
-		<testOnBorrow>true</testOnBorrow>
-		<testOnReturn>false</testOnReturn>
-		<logAbandoned>true</logAbandoned>
-		<removeAbandoned>true</removeAbandoned>
-		<validationInterval>30000</validationInterval>
-		<timeBetweenEvictionsRunMillis>30000</timeBetweenEvictionsRunMillis>
+		<!--<jmxEnabled>true</jmxEnabled>-->
+		<!--<testWhileIdle>true</testWhileIdle>-->
+		<!--<testOnBorrow>true</testOnBorrow>-->
+		<!--<testOnReturn>false</testOnReturn>-->
+		<!--<logAbandoned>true</logAbandoned>-->
+		<!--<removeAbandoned>true</removeAbandoned>-->
+		<!--<validationInterval>30000</validationInterval>-->
+		<!--<timeBetweenEvictionsRunMillis>30000</timeBetweenEvictionsRunMillis>-->
 		<maxActive>100</maxActive>
 		<initialSize>10</initialSize>
-		<maxWait>10000</maxWait>
-		<removeAbandonedTimeout>60</removeAbandonedTimeout>
-		<minEvictableIdleTimeMillis>30000</minEvictableIdleTimeMillis>
+		<!--<maxWait>10000</maxWait>-->
+		<!--<removeAbandonedTimeout>60</removeAbandonedTimeout>-->
+		<!--<minEvictableIdleTimeMillis>30000</minEvictableIdleTimeMillis>-->
 		<minIdle>10</minIdle>
 		<validationQuery>SELECT 1</validationQuery>
-		<jdbcInterceptors>
-			org.apache.tomcat.jdbc.pool.interceptor.ConnectionState;
-			org.apache.tomcat.jdbc.pool.interceptor.StatementFinalizer
-		</jdbcInterceptors>
+		<!--<jdbcInterceptors>-->
+			<!--org.apache.tomcat.jdbc.pool.interceptor.ConnectionState;-->
+			<!--org.apache.tomcat.jdbc.pool.interceptor.StatementFinalizer-->
+		<!--</jdbcInterceptors>-->
 	</db>
 	<db id="1">
 		<sgbd>postgresql</sgbd>
 		<url>jdbc:postgresql://127.0.0.1:5432/rest_db</url>
+		<driverClassName>org.postgresql.Driver</driverClassName>
+		<userName>postgres</userName>
+		<password>masterkey</password>
+		<!--<jmxEnabled>true</jmxEnabled>-->
+		<!--<testWhileIdle>true</testWhileIdle>-->
+		<!--<testOnBorrow>true</testOnBorrow>-->
+		<!--<testOnReturn>false</testOnReturn>-->
+		<!--<logAbandoned>true</logAbandoned>-->
+		<!--<removeAbandoned>true</removeAbandoned>-->
+		<!--<validationInterval>30000</validationInterval>-->
+		<!--<timeBetweenEvictionsRunMillis>30000</timeBetweenEvictionsRunMillis>-->
+		<maxActive>100</maxActive>
+		<initialSize>10</initialSize>
+		<!--<maxWait>10000</maxWait>-->
+		<!--<removeAbandonedTimeout>60</removeAbandonedTimeout>-->
+		<!--<minEvictableIdleTimeMillis>30000</minEvictableIdleTimeMillis>-->
+		<minIdle>10</minIdle>
+		<validationQuery>SELECT 1</validationQuery>
+		<!--<jdbcInterceptors>-->
+			<!--org.apache.tomcat.jdbc.pool.interceptor.ConnectionState;-->
+			<!--org.apache.tomcat.jdbc.pool.interceptor.StatementFinalizer-->
+		<!--</jdbcInterceptors>-->
+	</db>
+	<db id="2">
+		<sgbd>postgresql</sgbd>
+		<url>jdbc:postgresql://127.0.0.1:5432/uploads</url>
 		<driverClassName>org.postgresql.Driver</driverClassName>
 		<userName>postgres</userName>
 		<password>masterkey</password>

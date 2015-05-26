@@ -1,9 +1,12 @@
 package dependencies;
 
+import sun.misc.BASE64Encoder;
+
 import java.lang.reflect.Array;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.util.Date;
 
 public class JSON {
 	private final String quote = "\"";
@@ -57,10 +60,26 @@ public class JSON {
 		StringBuilder stb = new StringBuilder();
 
 		if (isArray(value)) {
-			int length = Array.getLength(value);
-			Object[] list = new Object[length];
-			for (int i = 0; i < length; i++) list[i] = Array.get(value, i);
-			addAttribute(attribute, list);
+			if (value instanceof byte[]) {
+				stb.append(json);
+				stb.append(quote);
+				stb.append(attribute);
+				stb.append(quote);
+				stb.append(": ");
+				stb.append(quote);
+				json = stb.toString();
+//				XCceox
+				String a = (new BASE64Encoder().encode((byte[]) value)).replaceAll("\n|\r", "");
+				stb.append((new BASE64Encoder().encode((byte[]) value)).replaceAll("\n|\r", ""));
+				stb.append(quote);
+				stb.append(", ");
+				json = stb.toString();
+			} else {
+				int length = Array.getLength(value);
+				Object[] list = new Object[length];
+				for (int i = 0; i < length; i++) list[i] = Array.get(value, i);
+				addAttribute(attribute, list);
+			}
 		} else {
 			stb.append(json);
 			stb.append(quote);
@@ -71,19 +90,15 @@ public class JSON {
 
 			if (value instanceof JSON) {
 				stb.append(((JSON) value).json);
-				stb.append(", ");
-				json = stb.toString();
-			} else if (value instanceof String) {
+			} else if (value instanceof String | value instanceof Date) {
 				stb.append(quote);
 				stb.append(value);
 				stb.append(quote);
-				stb.append(", ");
-				json = stb.toString();
 			} else {
 				stb.append(value);
-				stb.append(", ");
-				json = stb.toString();
 			}
+			stb.append(", ");
+			json = stb.toString();
 		}
 	}
 

@@ -11,7 +11,11 @@
 	<db id="1">
 		<query id="1">SELECT * FROM product</query>
 		<query id="2">SELECT * from client WHERE id_client &#60; ?</query>
-		<query id="3">SELECT * from supplier</query>
+		<query id="3">SELECT * from client</query>
+	</db>
+	<db id="2">
+		<query id="1">SELECT * FROM upload</query>
+		<query id="2">SELECT * FROM upload WHERE name = ?</query>
 	</db>
 	<!--<db id="2">-->
 	<!--<query id="1">SELECT * FROM testtable</query>-->
