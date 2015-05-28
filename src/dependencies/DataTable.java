@@ -1,8 +1,12 @@
 package dependencies;
 
+import com.sun.deploy.util.ArrayUtil;
+
+import java.lang.reflect.Array;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 public class DataTable {
 	private Object[][] values;
@@ -67,7 +71,38 @@ public class DataTable {
 			}
 			rs.next();
 		}
+	}
 
-		rs.close();
+	public void addRows(ResultSet rs) throws SQLException {
+		DataTable dt = new DataTable();
+		dt.build(rs);
+
+		int rows = this.getValues().length + dt.getValues().length;
+		int columns = this.getColumnNames().length;
+
+		Object[][] values = new Object[rows][columns];
+		String[] columnNames = new String[columns];
+		int[] types = new int[columns];
+
+		for (int i = 0; i < this.columnNames.length; i++) {
+			types[i] = this.getTypes()[i];
+			columnNames[i] = this.getColumnNames()[i];
+		}
+
+		for (int i = 0; i < this.values.length; i++) {
+			for (int j = 0; j < this.columnNames.length; j++) {
+				values[i][j] = this.values[i][j];
+			}
+		}
+
+		for (int i = 0, x = this.values.length; i < dt.getValues().length; i++) {
+			for (int j = 0; j < this.columnNames.length; j++) {
+				values[x + i][j] = dt.getValues()[i][j];
+			}
+		}
+
+		this.columnNames = columnNames;
+		this.types = types;
+		this.values = values;
 	}
 }
