@@ -1,9 +1,6 @@
 package server;
 
-import dependencies.CSVWriter;
-import dependencies.JSON;
-import dependencies.JSONWriter;
-import dependencies.LogHandler;
+import dependencies.*;
 import pack.*;
 
 import javax.jws.WebMethod;
@@ -77,7 +74,6 @@ public class Dispatcher {
 		return jsonBuilder.getJson();
 	}
 
-	//Params types must match with the DB type.
 	@WebMethod
 	public String writeEntireCSV(String idDB, String idQuery, String path, Object... params) throws IOException {
 		JSON jsonBuilder = new JSON();
@@ -162,6 +158,9 @@ public class Dispatcher {
 				else
 					jsonBuilder.addAttribute("message", "The query didn't retrieve data, because it didn't have a SELECT");
 			}
+
+			//Close everything
+			close(pst, conn);
 		} catch (Exception e) {
 			e.printStackTrace();
 			logs.write(Level.SEVERE, e.getMessage());
@@ -212,6 +211,43 @@ public class Dispatcher {
 			jsonBuilder.addAttribute("message", e.getMessage());
 		}
 		return jsonBuilder.getJson();
+	}
+
+	@WebMethod
+	public DataTable queryDataTable(String idDB, String idQuery, Object... params) throws IOException {
+		DataTable dt = new DataTable();
+
+		try {
+			logs.write(Level.INFO, "Make Data Table query called");
+			DBConnection dbConn = connections.get(idDB);
+			Connection conn = dbConn.getDataSourceProvider().getConnection();
+
+			ArrayList<Query> queries = new ArrayList<>();
+			Query query = dbConn.queries.get(idQuery);
+			PreparedStatement pst = conn.prepareStatement(query.getSentence(), ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+			queries.add(query);
+
+			if (countParameters(queries) != params.length)
+				throw new InvalidParameterException("The number of parameters passed doesn't match with the number of expected number of parameters");
+
+			//In case it is a SELECT.
+			if (query.getSentence().regionMatches(true, 0, "select", 0, 6)) {
+				ResultSet rs = pst.executeQuery();
+
+				dt.build(rs);
+				rs.close();
+			}
+			//In case of INSERT, DELETE or UPDATE.
+			else {
+				throw new Exception("INSERT, DELETE or UPDATES aren't supported by this method");
+			}
+			//Close everything
+			close(pst, conn);
+		} catch (Exception e) {
+			e.printStackTrace();
+			logs.write(Level.SEVERE, e.getMessage());
+		}
+		return dt;
 	}
 
 	@WebMethod
@@ -268,7 +304,6 @@ public class Dispatcher {
 	}
 
 	//Counts the number of parameters in the array of transactions.
-
 	private int countParameters(ArrayList<Query> queries) {
 		int number = 0;
 

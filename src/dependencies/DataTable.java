@@ -6,8 +6,17 @@ import java.sql.SQLException;
 
 public class DataTable {
 	private String[] columnNames;
-
 	private Object[][] values;
+
+	public int[] getTypes() {
+		return types;
+	}
+
+	public void setTypes(int[] types) {
+		this.types = types;
+	}
+
+	private int[] types;
 
 	public String[] getColumnNames() {
 		return columnNames;
@@ -46,10 +55,12 @@ public class DataTable {
 
 		this.columnNames = new String[cn];
 		this.values = new Object[rn][cn];
+		this.types = new int[cn];
 
-		for (int i = 0; i < cn; i++)
+		for (int i = 0; i < cn; i++) {
 			this.columnNames[i] = rsmd.getColumnName(i + 1);
-
+			this.types[i] = rsmd.getColumnType(i + 1);
+		}
 
 		for (int i = 0; i < rn; i++) {
 			for (int j = 0; j < cn; j++) {
