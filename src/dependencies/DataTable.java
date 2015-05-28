@@ -5,8 +5,9 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 
 public class DataTable {
-	private String[] columnNames;
 	private Object[][] values;
+	private String[] columnNames;
+	private int[] types;
 
 	public int[] getTypes() {
 		return types;
@@ -15,8 +16,6 @@ public class DataTable {
 	public void setTypes(int[] types) {
 		this.types = types;
 	}
-
-	private int[] types;
 
 	public String[] getColumnNames() {
 		return columnNames;
