@@ -30,25 +30,23 @@ public class JSON {
 		ResultSetMetaData rsmd = rs.getMetaData();
 		rs.last();
 
-		int columsNumber = rsmd.getColumnCount(),
-				rowsNumber = rs.getRow(),
-				currentRow = 0;
+		int columnsNumber = rsmd.getColumnCount();
+		int rowsNumber = rs.getRow();
+		JSON[] rows = new JSON[rowsNumber];
+		String[] columnNames = new String[columnsNumber];
+
 		rs.first();
 
-		JSON[] rows = new JSON[rowsNumber];
-		String[] columnNames = new String[columsNumber];
+		for (int i = 0; i < columnsNumber; i++)
+			columnNames[i] = rsmd.getColumnName(i + 1);
 
-		for (int i = 1; i <= columnNames.length; i++)
-			columnNames[i - 1] = rsmd.getColumnName(i);
+		for (int row = 0; row < rowsNumber; row++) {
+			rows[row] = new JSON();
 
-		for (int rsRow = 1; rsRow <= rowsNumber; rsRow++) {
-			rows[currentRow] = new JSON();
+			for (String columnName : columnNames)
+				rows[row].addAttribute(columnName, rs.getObject(columnName));
 
-			for (int i = 1; i <= columsNumber; i++)
-				rows[currentRow].addAttribute(columnNames[i - 1], rs.getObject(i));
-
-			rows[currentRow].build();
-			currentRow++;
+			rows[row].build();
 			rs.next();
 		}
 		this.addAttribute(attribute, rows.length > 0 ? rows : rows[0]);
@@ -88,7 +86,7 @@ public class JSON {
 
 			if (value instanceof JSON) {
 				stb.append(((JSON) value).json);
-			} else if (value instanceof String | value instanceof Date) {
+			} else if (value instanceof String || value instanceof Date) {
 				stb.append(quote);
 				stb.append(value);
 				stb.append(quote);

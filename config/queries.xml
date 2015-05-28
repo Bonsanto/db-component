@@ -1,6 +1,3 @@
-<!--todo //agregar ids para base de datos y a los queries-->
-<!--todo correct the query's bodies -->
-<!--todo correct the query's bodies -->
 <queries>
 	<db id="0">
 		<query id="1">SELECT id_pokemon, na_pokemon FROM pokemon WHERE id_pokemon = ?</query>
