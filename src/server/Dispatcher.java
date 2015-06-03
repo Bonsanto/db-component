@@ -23,9 +23,7 @@ public class Dispatcher {
 	private static HashMap<String, DBConnection> connections;
 	private static LogHandler logs;
 
-	//todo: add support for csv, WRITE IN DISK, SEND STATUS AND CONVERT BINARY TO ASCII 64.
 	//todo: Add a log register for all the queries to the dispatcher, to leave a witness of all the queries.
-
 	@WebMethod
 	public String writeSimpleCSV(String idDB, String idQuery, String path, Object... params) throws IOException {
 		JSON jsonBuilder = new JSON();
@@ -134,6 +132,8 @@ public class Dispatcher {
 			String query = dbConn.queries.get(idQuery).getSentence();
 			PreparedStatement pst = conn.prepareStatement(query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
 
+			//todo: add exception
+			
 			for (int i = 0; i < params.length; i++) {
 				pst.setObject(i + 1, params[i]);
 			}
@@ -179,6 +179,11 @@ public class Dispatcher {
 			Connection conn = dbConn.getDataSourceProvider().getConnection();
 			String query = dbConn.queries.get(idQuery).getSentence();
 			PreparedStatement pst = conn.prepareStatement(query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+			ArrayList<Query> queries = new ArrayList<>();
+			queries.add(dbConn.queries.get(idQuery));
+
+			if (countParameters(queries) != params.length)
+				throw new InvalidParameterException("The number of parameters passed doesn't match with the number of expected number of parameters");
 
 			for (int i = 0; i < params.length; i++)
 				pst.setObject(i + 1, params[i]);
@@ -222,13 +227,15 @@ public class Dispatcher {
 			DBConnection dbConn = connections.get(idDB);
 			Connection conn = dbConn.getDataSourceProvider().getConnection();
 
-			ArrayList<Query> queries = new ArrayList<>();
 			Query query = dbConn.queries.get(idQuery);
 			PreparedStatement pst = conn.prepareStatement(query.getSentence(), ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-			queries.add(query);
 
-			if (countParameters(queries) != params.length)
-				throw new InvalidParameterException("The number of parameters passed doesn't match with the number of expected number of parameters");
+			if (!compareParameterNumbers(dbConn, params, idQuery)) {
+				ArrayList<Query> queries = new ArrayList<>();
+				queries.add(query);
+
+				throw new InvalidParameterException("The number of parameters passed doesn't match with the number of expected number of parameters. Expected: " + countParameters(queries) + " but received: " + params.length);
+			}
 
 			//In case it is a SELECT.
 			if (query.getSentence().regionMatches(true, 0, "select", 0, 6)) {
@@ -238,9 +245,9 @@ public class Dispatcher {
 				rs.close();
 			}
 			//In case of INSERT, DELETE or UPDATE.
-			else {
+			else
 				throw new Exception("INSERT, DELETE or UPDATES aren't supported by this method");
-			}
+
 			//Close everything
 			close(pst, conn);
 		} catch (Exception e) {
@@ -251,7 +258,7 @@ public class Dispatcher {
 	}
 
 	@WebMethod
-	public String makeTransaction(String idDB, String[] idQueries, Object... parameters) throws IOException {
+	public String makeTransaction(String idDB, String[] idQueries, Object... params) throws IOException {
 		JSON jsonBuilder = new JSON();
 
 		try {
@@ -260,33 +267,31 @@ public class Dispatcher {
 			Connection conn = dbConn.getDataSourceProvider().getConnection();
 			PreparedStatement pst;
 
-			//Finds the queries that will be executed for the transaction.
-			ArrayList<Query> queries = new ArrayList<>();
-
-			for (String idQuery : idQueries) {
-				queries.add(dbConn.queries.get(idQuery));
-			}
-
 			//In case the number of parameters doesn't match.
-			if (countParameters(queries) != parameters.length)
-				throw new InvalidParameterException("The number of parameters passed doesn't match with the number of expected number of parameters");
+			if (!compareParameterNumbers(dbConn, params, idQueries)) {
+				ArrayList<Query> queries = new ArrayList<>();
+				for (String idQuery : idQueries)
+					queries.add(dbConn.queries.get(idQuery));
+
+				throw new InvalidParameterException("The number of parameters passed doesn't match with the number of expected number of parameters. Expected: " + countParameters(queries) + " but received: " + params.length);
+			}
 
 			//Begin the transaction.
 			conn.setAutoCommit(false);
-
 			int parametersIteration = 0;
 
-			for (Query query : queries) {
-				pst = conn.prepareStatement(query.getSentence());
+			for (String query : idQueries) {
+				Query q = dbConn.queries.get(query);
+				pst = conn.prepareStatement(q.getSentence());
 
 				//Count the number of parameters for this specific query.
 				ArrayList<Query> currentQuery = new ArrayList<>();
-				currentQuery.add(query);
+				currentQuery.add(q);
 
 				int numberOfParameters = countParameters(currentQuery);
 
 				for (int i = 0; i < numberOfParameters; i++) {
-					pst.setObject(i + 1, parameters[parametersIteration]);
+					pst.setObject(i + 1, params[parametersIteration]);
 					parametersIteration++;
 				}
 				pst.close();
@@ -302,6 +307,17 @@ public class Dispatcher {
 		}
 		return jsonBuilder.getJson();
 	}
+
+	//Compares the number of parameters and the number of expected parameters in queries.
+	private boolean compareParameterNumbers(DBConnection dbc, Object[] params, String... idQueries) {
+		ArrayList<Query> qs = new ArrayList<>();
+
+		for (String query : idQueries)
+			qs.add(dbc.queries.get(query));
+
+		return countParameters(qs) == params.length;
+	}
+
 
 	//Counts the number of parameters in the array of transactions.
 	private int countParameters(ArrayList<Query> queries) {
@@ -329,7 +345,7 @@ public class Dispatcher {
 			ConnectionsReader connReader = new ConnectionsReader();
 			QueriesReader queriesReader = new QueriesReader();
 			SettingsReader settingsReader = new SettingsReader();
-			HashMap<String, String> config;
+			HashMap<String, Object> config;
 			logs = new LogHandler();
 
 			config = settingsReader.readSettings(new File("").getAbsolutePath() +
@@ -342,6 +358,7 @@ public class Dispatcher {
 			Dispatcher implementor = new Dispatcher();
 			String address = "http://" + config.get("ip") + ":" + config.get("port") + "/" + config.get("name");
 			System.out.println("Server wsdl can be found on http://localhost:" + config.get("port") + "/" + config.get("name"));
+
 			Endpoint.publish(address, implementor);
 		} catch (Exception e) {
 			e.printStackTrace();

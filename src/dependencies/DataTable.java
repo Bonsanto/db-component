@@ -1,12 +1,8 @@
 package dependencies;
 
-import com.sun.deploy.util.ArrayUtil;
-
-import java.lang.reflect.Array;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.util.ArrayList;
 
 public class DataTable {
 	private Object[][] values;

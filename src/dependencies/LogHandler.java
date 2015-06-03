@@ -21,6 +21,7 @@ public class LogHandler {
 	private Calendar cal;
 	private FileWriter fileWriter;
 	private PrintWriter printWriter;
+	private Level maxLevel;
 
 	public void close() throws IOException {
 		this.printWriter.flush();
@@ -29,18 +30,20 @@ public class LogHandler {
 	}
 
 	public void write(Level lvl, String message) throws IOException {
-		Calendar cal = Calendar.getInstance();
-		String log = this.makeMessage(new Date().toString(), lvl.toString(), message);
+		if (this.maxLevel.intValue() <= lvl.intValue()) {
+			Calendar cal = Calendar.getInstance();
+			String log = this.makeMessage(new Date().toString(), lvl.toString(), message);
 
-		if (!this.cal.equals(cal)) {
-			this.close();
-			this.cal = cal;
-			this.concatenateName();
-			this.fileWriter = new FileWriter(this.path, true);
-			this.printWriter = new PrintWriter(this.fileWriter);
+			if (!this.cal.equals(cal)) {
+				this.close();
+				this.cal = cal;
+				this.concatenateName();
+				this.fileWriter = new FileWriter(this.path, true);
+				this.printWriter = new PrintWriter(this.fileWriter);
+			}
+
+			this.printWriter.append(log);
 		}
-
-		this.printWriter.append(log);
 		this.close();
 	}
 
@@ -64,13 +67,21 @@ public class LogHandler {
 
 	private void concatenateName() {
 		this.path = new File("").getAbsolutePath() + File.separator + this.folder +
-				File.separator + cal.get(Calendar.YEAR) + FILE_SEPARATOR + cal.get(Calendar.MONTH) +
+				File.separator + cal.get(Calendar.YEAR) + FILE_SEPARATOR + cal.get(Calendar.MONTH) + 1 +
 				FILE_SEPARATOR + cal.get(Calendar.DATE) + "Log.csv";
 	}
 
 	public LogHandler(String folder, String columnsSeparator, String rowsSeparator) throws IOException {
 		this.setBuffers(folder);
 		this.setSeparators(columnsSeparator, rowsSeparator);
+	}
+
+	public Level getMaxLevel() {
+		return maxLevel;
+	}
+
+	public void setMaxLevel(String maxLevel) {
+		this.maxLevel = Level.parse(maxLevel.toUpperCase());
 	}
 
 	public LogHandler() throws IOException {

@@ -12,11 +12,11 @@ import java.util.Objects;
 import java.util.logging.Level;
 
 public class SettingsReader {
-	private final String[] SETTING_NAMES = {"ip", "name", "port"},
-			DEFAULT_SETTINGS = {"0.0.0.0", "Dispatcher", "8080"};
+	private final String[] SETTING_NAMES = {"ip", "name", "port", "log"};
+	private final Object[] DEFAULT_SETTINGS = {"0.0.0.0", "Dispatcher", "8080", Level.SEVERE};
 
-	public HashMap<String, String> readSettings(String path, LogHandler log) throws Exception {
-		HashMap<String, String> stngs = new HashMap<>();
+	public HashMap<String, Object> readSettings(String path, LogHandler log) throws Exception {
+		HashMap<String, Object> stngs = new HashMap<>();
 		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 		DocumentBuilder db = dbf.newDocumentBuilder();
 		Document doc = db.parse(new File(path));
@@ -34,6 +34,8 @@ public class SettingsReader {
 			else
 				stngs.put(SETTING_NAMES[i], pro.item(0).getFirstChild().getNodeValue());
 		}
+
+		log.setMaxLevel((String) stngs.get("log"));
 		return stngs;
 	}
 }
